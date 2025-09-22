@@ -202,6 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertTeamSchema.parse({
         ...req.body,
         captainId: userId,
+        teamCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
       });
 
       const team = await storage.createTeam(validatedData);
@@ -209,6 +210,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating team:", error);
       res.status(500).json({ message: "Failed to create team" });
+    }
+  });
+
+  app.put('/api/teams/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const teamId = req.params.id;
+      
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      
+      if (team.captainId !== userId) {
+        return res.status(403).json({ message: "Only team captain can edit team" });
+      }
+
+      const updatedTeam = await storage.updateTeam(teamId, req.body);
+      res.json(updatedTeam);
+    } catch (error) {
+      console.error("Error updating team:", error);
+      res.status(500).json({ message: "Failed to update team" });
+    }
+  });
+
+  app.delete('/api/teams/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const teamId = req.params.id;
+      
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      
+      if (team.captainId !== userId) {
+        return res.status(403).json({ message: "Only team captain can delete team" });
+      }
+
+      await storage.deleteTeam(teamId);
+      res.json({ message: "Team deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting team:", error);
+      res.status(500).json({ message: "Failed to delete team" });
     }
   });
 
@@ -235,6 +280,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user teams:", error);
       res.status(500).json({ message: "Failed to fetch user teams" });
+    }
+  });
+
+  // Team member management
+  app.post('/api/teams/:id/members', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const teamId = req.params.id;
+      
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      
+      if (team.captainId !== userId) {
+        return res.status(403).json({ message: "Only team captain can add members" });
+      }
+
+      const member = await storage.addTeamMember(teamId, req.body.userId, req.body.role);
+      res.json(member);
+    } catch (error) {
+      console.error("Error adding team member:", error);
+      res.status(500).json({ message: "Failed to add team member" });
+    }
+  });
+
+  app.put('/api/teams/:id/members/:memberId', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const teamId = req.params.id;
+      
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      
+      if (team.captainId !== userId) {
+        return res.status(403).json({ message: "Only team captain can edit members" });
+      }
+
+      const member = await storage.updateTeamMember(req.params.memberId, req.body);
+      res.json(member);
+    } catch (error) {
+      console.error("Error updating team member:", error);
+      res.status(500).json({ message: "Failed to update team member" });
+    }
+  });
+
+  app.delete('/api/teams/:id/members/:memberId', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const teamId = req.params.id;
+      
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      
+      if (team.captainId !== userId) {
+        return res.status(403).json({ message: "Only team captain can remove members" });
+      }
+
+      await storage.removeTeamMember(req.params.memberId);
+      res.json({ message: "Team member removed successfully" });
+    } catch (error) {
+      console.error("Error removing team member:", error);
+      res.status(500).json({ message: "Failed to remove team member" });
+    }
+  });
+
+  // Join team by code
+  app.post('/api/teams/join', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { teamCode } = req.body;
+      
+      const team = await storage.getTeamByCode(teamCode);
+      if (!team) {
+        return res.status(404).json({ message: "Team not found with this code" });
+      }
+      
+      const members = await storage.getTeamMembers(team.id);
+      if (members.length >= team.maxPlayers) {
+        return res.status(400).json({ message: "Team is already full" });
+      }
+      
+      const member = await storage.addTeamMember(team.id, userId, "player");
+      res.json(member);
+    } catch (error) {
+      console.error("Error joining team:", error);
+      res.status(500).json({ message: "Failed to join team" });
     }
   });
 

@@ -1,23 +1,122 @@
+
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import TeamCard from "@/components/team/team-card";
-import CreateTeamModal from "@/components/team/create-team-modal";
+import TeamManagementCard from "@/components/team/team-management-card";
+import CreateEditTeamModal from "@/components/team/create-edit-team-modal";
+import AddEditPlayerModal from "@/components/team/add-edit-player-modal";
+import JoinTeamModal from "@/components/team/join-team-modal";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { Users, Plus, Crown, UserPlus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Users, Plus, UserPlus, Trophy, Target, Zap, Crown } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Teams() {
   const { user } = useAuth();
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // Modal states
+  const [showCreateEditModal, setShowCreateEditModal] = useState(false);
+  const [showAddPlayerModal, setShowAddPlayerModal] = useState(false);
+  const [showJoinTeamModal, setShowJoinTeamModal] = useState(false);
+  
+  // Edit states
+  const [editingTeam, setEditingTeam] = useState(null);
+  const [editingPlayer, setEditingPlayer] = useState(null);
+  const [currentTeamId, setCurrentTeamId] = useState(null);
 
   const { data: userTeams, isLoading } = useQuery({
     queryKey: ["/api/user/teams"],
     enabled: !!user,
   });
+
+  // Team operations
+  const deleteTeamMutation = useMutation({
+    mutationFn: async (teamId: string) => {
+      return await apiRequest("DELETE", `/api/teams/${teamId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user/teams"] });
+      toast({
+        title: "Success!",
+        description: "Team deleted successfully!",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const joinTeamMutation = useMutation({
+    mutationFn: async (teamCode: string) => {
+      return await apiRequest("POST", "/api/teams/join", { teamCode });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user/teams"] });
+      setShowJoinTeamModal(false);
+      toast({
+        title: "Success!",
+        description: "Joined team successfully!",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Modal handlers
+  const handleCreateTeam = () => {
+    setEditingTeam(null);
+    setShowCreateEditModal(true);
+  };
+
+  const handleEditTeam = (team: any) => {
+    setEditingTeam(team);
+    setShowCreateEditModal(true);
+  };
+
+  const handleDeleteTeam = (teamId: string) => {
+    if (confirm("Are you sure you want to delete this team? This action cannot be undone.")) {
+      deleteTeamMutation.mutate(teamId);
+    }
+  };
+
+  const handleAddPlayer = (teamId: string) => {
+    setCurrentTeamId(teamId);
+    setEditingPlayer(null);
+    setShowAddPlayerModal(true);
+  };
+
+  const handleEditPlayer = (player: any, teamId: string) => {
+    setCurrentTeamId(teamId);
+    setEditingPlayer(player);
+    setShowAddPlayerModal(true);
+  };
+
+  const handleJoinTeam = (teamCode: string) => {
+    joinTeamMutation.mutate(teamCode);
+  };
+
+  const copyTeamCode = (teamCode: string) => {
+    navigator.clipboard.writeText(teamCode);
+    toast({
+      title: "Copied!",
+      description: "Team code copied to clipboard",
+    });
+  };
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -32,11 +131,32 @@ export default function Teams() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-6xl font-black mb-4">
-              <span className="text-gradient">TEAMS</span>
+              <span className="text-gradient">TEAM MANAGEMENT</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Create your squad and dominate tournaments together
+              Create, manage, and lead your esports squad to victory
             </p>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              className="gradient-fire text-black font-bold hover:scale-105 transition-transform px-8 py-3"
+              onClick={handleCreateTeam}
+              data-testid="create-team-button"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Create Team
+            </Button>
+            <Button 
+              variant="outline" 
+              className="border-primary text-primary hover:bg-primary hover:text-black font-bold px-8 py-3"
+              onClick={() => setShowJoinTeamModal(true)}
+              data-testid="join-team-button"
+            >
+              <UserPlus className="w-5 h-5 mr-2" />
+              Join Team
+            </Button>
           </div>
         </div>
       </section>
@@ -52,20 +172,24 @@ export default function Teams() {
                 <Crown className="w-8 h-8 text-primary" />
                 My Teams
               </h2>
-              <Button 
-                className="gradient-fire text-black font-bold hover:scale-105 transition-transform"
-                onClick={() => setShowCreateModal(true)}
-                data-testid="create-team-button"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create Team
-              </Button>
+              <div className="text-sm text-muted-foreground">
+                {userTeams?.length || 0} teams created
+              </div>
             </div>
 
             {userTeams && userTeams.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="user-teams-grid">
                 {userTeams.map((team: any) => (
-                  <TeamCard key={team.id} team={team} isOwner={true} />
+                  <TeamManagementCard 
+                    key={team.id} 
+                    team={team}
+                    onEdit={handleEditTeam}
+                    onDelete={handleDeleteTeam}
+                    onAddPlayer={handleAddPlayer}
+                    onEditPlayer={handleEditPlayer}
+                    onCopyCode={copyTeamCode}
+                    isOwner={true}
+                  />
                 ))}
               </div>
             ) : (
@@ -74,11 +198,11 @@ export default function Teams() {
                   <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                   <h3 className="text-xl font-semibold mb-2">No Teams Yet</h3>
                   <p className="text-muted-foreground mb-6">
-                    Create your first team to compete in team tournaments
+                    Create your first team and start building your esports legacy
                   </p>
                   <Button 
                     className="gradient-fire text-black font-bold"
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={handleCreateTeam}
                     data-testid="create-first-team"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -89,16 +213,16 @@ export default function Teams() {
             )}
           </div>
 
-          {/* Team Benefits */}
+          {/* Team Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <Card className="bg-card border-border hover:border-primary/50 transition-colors">
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 gradient-fire rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-6 h-6 text-black" />
+                  <Trophy className="w-6 h-6 text-black" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">Squad Tournaments</h3>
+                <h3 className="text-lg font-bold mb-2">Tournament Ready</h3>
                 <p className="text-sm text-muted-foreground">
-                  Participate in exclusive team-based tournaments with your squad
+                  Organize your squad for competitive tournaments and leagues
                 </p>
               </CardContent>
             </Card>
@@ -106,11 +230,11 @@ export default function Teams() {
             <Card className="bg-card border-border hover:border-accent/50 transition-colors">
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 gradient-electric rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Crown className="w-6 h-6 text-black" />
+                  <Target className="w-6 h-6 text-black" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">Team Management</h3>
+                <h3 className="text-lg font-bold mb-2">Performance Tracking</h3>
                 <p className="text-sm text-muted-foreground">
-                  Manage your roster, assign roles, and coordinate strategies
+                  Track team stats, win rates, and individual player performance
                 </p>
               </CardContent>
             </Card>
@@ -118,35 +242,37 @@ export default function Teams() {
             <Card className="bg-card border-border hover:border-destructive/50 transition-colors">
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 gradient-victory rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <UserPlus className="w-6 h-6 text-black" />
+                  <Zap className="w-6 h-6 text-black" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">Invite Friends</h3>
+                <h3 className="text-lg font-bold mb-2">Advanced Management</h3>
                 <p className="text-sm text-muted-foreground">
-                  Invite your friends to join your team and compete together
+                  Assign roles, manage roster, and coordinate team strategies
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Team Requirements */}
+          {/* Team Guidelines */}
           <Card className="bg-card/50 border-border">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Team Requirements</h3>
+              <h3 className="text-lg font-semibold mb-4">Team Management Guidelines</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium mb-2">BGMI Teams</h4>
+                  <h4 className="font-medium mb-2 text-primary">Team Creation</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Maximum 4 players per team</li>
-                    <li>• One captain required</li>
-                    <li>• Valid BGMI IDs for all members</li>
+                    <li>• Choose a unique and appropriate team name</li>
+                    <li>• Upload a team logo for better recognition</li>
+                    <li>• Set the correct game type for your team</li>
+                    <li>• Invite skilled players to join your roster</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">Free Fire Teams</h4>
+                  <h4 className="font-medium mb-2 text-accent">Player Management</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Maximum 4 players per team</li>
-                    <li>• Team name and tag required</li>
-                    <li>• Valid Free Fire IDs for all members</li>
+                    <li>• Assign appropriate roles to team members</li>
+                    <li>• Keep player information up to date</li>
+                    <li>• Monitor team performance and stats</li>
+                    <li>• Maintain good team communication</li>
                   </ul>
                 </div>
               </div>
@@ -157,10 +283,26 @@ export default function Teams() {
 
       <Footer />
 
-      {/* Create Team Modal */}
-      <CreateTeamModal 
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+      {/* Modals */}
+      <CreateEditTeamModal 
+        isOpen={showCreateEditModal}
+        onClose={() => setShowCreateEditModal(false)}
+        team={editingTeam}
+        onAddPlayer={(teamId) => handleAddPlayer(teamId)}
+      />
+
+      <AddEditPlayerModal 
+        isOpen={showAddPlayerModal}
+        onClose={() => setShowAddPlayerModal(false)}
+        player={editingPlayer}
+        teamId={currentTeamId}
+      />
+
+      <JoinTeamModal 
+        isOpen={showJoinTeamModal}
+        onClose={() => setShowJoinTeamModal(false)}
+        onJoin={handleJoinTeam}
+        isLoading={joinTeamMutation.isPending}
       />
     </div>
   );

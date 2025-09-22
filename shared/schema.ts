@@ -53,6 +53,8 @@ export const teams = pgTable("teams", {
   name: varchar("name").notNull(),
   tag: varchar("tag"),
   logoUrl: varchar("logo_url"),
+  gameType: varchar("game_type").default("BGMI"),
+  teamCode: varchar("team_code").unique(),
   captainId: varchar("captain_id").notNull().references(() => users.id),
   maxPlayers: integer("max_players").default(4),
   createdAt: timestamp("created_at").defaultNow(),
