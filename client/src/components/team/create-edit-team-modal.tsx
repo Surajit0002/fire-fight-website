@@ -375,9 +375,9 @@ export default function CreateEditTeamModal({
                     </div>
                   </div>
 
-                  {/* Team Code Display (for editing) */}
+                  {/* Team Code Display and Invite Section (for editing) */}
                   {isEditing && team?.teamCode && (
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
                           <label className="text-sm font-medium text-gray-700">Team Join Code</label>
@@ -394,14 +394,69 @@ export default function CreateEditTeamModal({
                             </Button>
                           </div>
                         </div>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onAddPlayer(team.id)}
+                            className="flex items-center gap-2"
+                          >
+                            <UserPlus className="w-4 h-4" />
+                            Add Player
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {/* Invite Players Section */}
+                      <div className="border-t pt-4">
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Invite Players</label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Enter username or email to invite"
+                            className="flex-1 h-10 text-sm bg-white border-gray-200 focus:border-blue-500"
+                            data-testid="invite-player-input"
+                          />
+                          <Button
+                            type="button"
+                            className="gradient-electric text-black font-medium px-4 py-2 h-10"
+                            data-testid="send-invite-button"
+                          >
+                            <Upload className="w-4 h-4 mr-1" />
+                            Send Invite
+                          </Button>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Players will receive an invitation to join your team
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Invite Section for New Teams */}
+                  {!isEditing && (
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <UserPlus className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-700">Ready to Invite Players?</span>
+                      </div>
+                      <p className="text-xs text-blue-600 mb-3">
+                        Create your team first, then you can add players and send invitations.
+                      </p>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Prepare invite list (username/email)"
+                          className="flex-1 h-9 text-sm bg-white border-blue-200 focus:border-blue-500"
+                          disabled
+                        />
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => onAddPlayer(team.id)}
-                          className="flex items-center gap-2"
+                          size="sm"
+                          disabled
+                          className="h-9 px-3 text-xs"
                         >
-                          <UserPlus className="w-4 h-4" />
-                          Add Members
+                          <UserPlus className="w-3 h-3 mr-1" />
+                          Invite
                         </Button>
                       </div>
                     </div>
@@ -479,19 +534,36 @@ export default function CreateEditTeamModal({
                     </div>
                   ))}
 
-                  {/* Add Player Button */}
+                  {/* Add Player Options */}
                   {teamMembers.length < (watch("maxPlayers") || 4) && (
-                    <div
-                      onClick={() => onAddPlayer(team?.id)}
-                      className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer group"
-                    >
-                      <div className="flex flex-col items-center justify-center h-full text-center">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mb-2 transition-colors">
-                          <UserPlus className="w-6 h-6 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Add Player Manually */}
+                      <div
+                        onClick={() => onAddPlayer(team?.id)}
+                        className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer group"
+                      >
+                        <div className="flex flex-col items-center justify-center h-full text-center">
+                          <div className="w-12 h-12 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mb-2 transition-colors">
+                            <UserPlus className="w-6 h-6 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                          </div>
+                          <p className="text-sm font-medium text-gray-600 group-hover:text-blue-600 transition-colors">
+                            Add Player
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">Create new member</p>
                         </div>
-                        <p className="text-sm font-medium text-gray-600 group-hover:text-blue-600 transition-colors">
-                          Add Player
-                        </p>
+                      </div>
+                      
+                      {/* Quick Invite */}
+                      <div className="border-2 border-dashed border-green-300 rounded-xl p-4 hover:border-green-400 hover:bg-green-50 transition-all cursor-pointer group">
+                        <div className="flex flex-col items-center justify-center h-full text-center">
+                          <div className="w-12 h-12 rounded-full bg-green-100 group-hover:bg-green-200 flex items-center justify-center mb-2 transition-colors">
+                            <Upload className="w-6 h-6 text-green-500 group-hover:text-green-600 transition-colors" />
+                          </div>
+                          <p className="text-sm font-medium text-green-600 group-hover:text-green-700 transition-colors">
+                            Send Invite
+                          </p>
+                          <p className="text-xs text-green-500 mt-1">Invite existing user</p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -505,13 +577,29 @@ export default function CreateEditTeamModal({
             <div className="px-6 pb-6">
               <div className="border-t pt-6">
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-8 h-8 text-blue-500" />
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Ready to build your team!</h3>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 text-sm mb-6">
                     Create your team first, then add members to start competing.
                   </p>
+                  
+                  {/* Feature Preview Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-md mx-auto">
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                      <UserPlus className="w-6 h-6 text-blue-500 mx-auto mb-1" />
+                      <p className="text-xs font-medium text-blue-700">Add Players</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-3 text-center">
+                      <Upload className="w-6 h-6 text-green-500 mx-auto mb-1" />
+                      <p className="text-xs font-medium text-green-700">Send Invites</p>
+                    </div>
+                    <div className="bg-purple-50 rounded-lg p-3 text-center">
+                      <Trophy className="w-6 h-6 text-purple-500 mx-auto mb-1" />
+                      <p className="text-xs font-medium text-purple-700">Compete</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

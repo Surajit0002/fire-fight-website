@@ -41,13 +41,15 @@ interface AddEditPlayerModalProps {
   onClose: () => void;
   player?: any;
   teamId: string | null;
+  mode?: 'add' | 'edit' | 'invite';
 }
 
 export default function AddEditPlayerModal({ 
   isOpen, 
   onClose, 
   player, 
-  teamId 
+  teamId,
+  mode = 'add'
 }: AddEditPlayerModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -163,10 +165,14 @@ export default function AddEditPlayerModal({
         <DialogHeader className="px-6 py-4 border-b">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-3 text-xl font-bold">
-              <div className="w-8 h-8 gradient-electric rounded-lg flex items-center justify-center">
-                <UserPlus className="w-5 h-5 text-black" />
+              <div className={`w-8 h-8 ${mode === 'invite' ? 'gradient-fire' : 'gradient-electric'} rounded-lg flex items-center justify-center`}>
+                {mode === 'invite' ? (
+                  <Upload className="w-5 h-5 text-black" />
+                ) : (
+                  <UserPlus className="w-5 h-5 text-black" />
+                )}
               </div>
-              {isEditing ? "Edit Player" : "Add Player"}
+              {isEditing ? "Edit Player" : mode === 'invite' ? "Invite Player" : "Add Player"}
             </DialogTitle>
             <Button 
               variant="ghost" 
@@ -208,33 +214,129 @@ export default function AddEditPlayerModal({
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Player Name */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Player Name</label>
-              <Input
-                placeholder="Enter player name"
-                className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
-                {...register("username")}
-                data-testid="player-username-input"
-              />
-              {errors.username && (
-                <p className="text-sm text-red-500">{errors.username.message}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Player Role */}
+            {mode === 'invite' ? (
+              /* Invite Mode - Email/Username Input */
+              <div className="space-y-4">
+                <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Upload className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">Send Invitation</span>
+                  </div>
+                  <p className="text-xs text-blue-600">
+                    Enter the username or email of the player you want to invite to your team.
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Username or Email</label>
+                  <Input
+                    placeholder="Enter username or email address"
+                    className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
+                    data-testid="invite-username-input"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Invitation Message (Optional)</label>
+                  <textarea
+                    placeholder="Add a personal message to your invitation..."
+                    className="w-full h-20 p-3 text-sm bg-white border border-gray-200 rounded-md focus:border-blue-500 focus:outline-none resize-none"
+                    data-testid="invite-message-input"
+                  />
+                </div>
+              </div>
+            ) : (
+              /* Regular Add/Edit Mode */
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Role</label>
+                <label className="text-sm font-medium text-gray-700">Player Name</label>
+                <Input
+                  placeholder="Enter player name"
+                  className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
+                  {...register("username")}
+                  data-testid="player-username-input"
+                />
+                {errors.username && (
+                  <p className="text-sm text-red-500">{errors.username.message}</p>
+                )}
+              </div>
+            )}
+
+            {mode !== 'invite' && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Player Role */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Role</label>
+                    <Select 
+                      value={watch("role")} 
+                      onValueChange={(value) => setValue("role", value)}
+                    >
+                      <SelectTrigger 
+                        className="h-12 bg-white border-gray-200 focus:border-blue-500" 
+                        data-testid="player-role-select"
+                      >
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {playerRoles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            <div className="flex items-center gap-2">
+                              <span className={role.color}>{role.icon}</span>
+                              <span className="truncate">{role.label}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.role && (
+                      <p className="text-sm text-red-500">{errors.role.message}</p>
+                    )}
+                  </div>
+                  
+                  {/* Game ID */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Game ID</label>
+                    <Input
+                      placeholder="Game ID"
+                      className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
+                      {...register("gameId")}
+                      data-testid="player-game-id-input"
+                    />
+                    {errors.gameId && (
+                      <p className="text-sm text-red-500">{errors.gameId.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Phone Number */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                  <Input
+                    type="tel"
+                    placeholder="Enter phone number"
+                    className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
+                    {...register("phone")}
+                    data-testid="player-phone-input"
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-red-500">{errors.phone.message}</p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {mode === 'invite' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Suggested Role</label>
                 <Select 
                   value={watch("role")} 
                   onValueChange={(value) => setValue("role", value)}
                 >
                   <SelectTrigger 
                     className="h-12 bg-white border-gray-200 focus:border-blue-500" 
-                    data-testid="player-role-select"
+                    data-testid="invite-role-select"
                   >
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder="Select suggested role" />
                   </SelectTrigger>
                   <SelectContent>
                     {playerRoles.map((role) => (
@@ -247,40 +349,8 @@ export default function AddEditPlayerModal({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.role && (
-                  <p className="text-sm text-red-500">{errors.role.message}</p>
-                )}
               </div>
-              
-              {/* Game ID */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Game ID</label>
-                <Input
-                  placeholder="Game ID"
-                  className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
-                  {...register("gameId")}
-                  data-testid="player-game-id-input"
-                />
-                {errors.gameId && (
-                  <p className="text-sm text-red-500">{errors.gameId.message}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Phone Number */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Phone Number</label>
-              <Input
-                type="tel"
-                placeholder="Enter phone number"
-                className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
-                {...register("phone")}
-                data-testid="player-phone-input"
-              />
-              {errors.phone && (
-                <p className="text-sm text-red-500">{errors.phone.message}</p>
-              )}
-            </div>
+            )}
 
             {/* Role Description */}
             <div className="bg-gray-50 rounded-lg p-4">
@@ -310,14 +380,14 @@ export default function AddEditPlayerModal({
               Cancel
             </Button>
             <Button 
-              className="flex-1 h-12 gradient-electric text-black font-bold hover:scale-105 transition-transform"
+              className={`flex-1 h-12 ${mode === 'invite' ? 'gradient-fire' : 'gradient-electric'} text-black font-bold hover:scale-105 transition-transform`}
               onClick={handleSubmit(onSubmit)}
               disabled={addPlayerMutation.isPending}
               data-testid="add-player-submit"
             >
               {addPlayerMutation.isPending ? 
-                (isEditing ? "Saving..." : "Adding...") : 
-                (isEditing ? "Save Changes" : "Add Player")
+                (isEditing ? "Saving..." : mode === 'invite' ? "Sending..." : "Adding...") : 
+                (isEditing ? "Save Changes" : mode === 'invite' ? "Send Invitation" : "Add Player")
               }
             </Button>
           </div>
