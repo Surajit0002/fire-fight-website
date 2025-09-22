@@ -171,124 +171,112 @@ export default function TeamManagementCard({
       <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${getGameTypeGradient(team.gameType || 'bgmi')} blur-xl`} />
 
       <CardContent className="relative p-0">
-        {/* Compact Header Section - All in One Row */}
-        <div className={`relative px-4 py-4 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
-          {/* Header Background Pattern */}
-          <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        {/* Enhanced Header Section */}
+        <div className={`relative px-5 py-5 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
+          {/* Dynamic Background Patterns */}
+          <div className="absolute inset-0 bg-black/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-white/10 to-black/20" />
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
           
-          <div className="relative flex items-center justify-between gap-3">
-            {/* Left Side: Logo + Team Info */}
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {/* Compact Team Logo */}
-              <div className="relative flex-shrink-0">
-                <div className="w-12 h-12 rounded-lg bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-xl border border-white/20 group-hover:scale-105 transition-transform duration-300">
-                  {team.logoUrl ? (
-                    <img
-                      src={team.logoUrl}
-                      alt={team.name}
-                      className="w-8 h-8 rounded-md object-cover"
-                    />
-                  ) : (
-                    <Users className="w-6 h-6 text-white" />
-                  )}
+          {/* Floating Elements */}
+          <div className="absolute top-2 right-2 w-16 h-16 bg-white/5 rounded-full blur-xl" />
+          <div className="absolute bottom-2 left-2 w-12 h-12 bg-white/5 rounded-full blur-lg" />
+          
+          <div className="relative space-y-4">
+            {/* Top Row: Logo + Team Info + Actions */}
+            <div className="flex items-center justify-between gap-4">
+              {/* Left: Enhanced Logo Section */}
+              <div className="flex items-center gap-4">
+                <div className="relative flex-shrink-0">
+                  {/* Enhanced Team Logo */}
+                  <div className="w-16 h-16 rounded-2xl bg-black/40 backdrop-blur-md flex items-center justify-center shadow-2xl border-2 border-white/30 group-hover:scale-105 group-hover:rotate-3 transition-all duration-500 relative overflow-hidden">
+                    {/* Inner glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl" />
+                    {team.logoUrl ? (
+                      <img
+                        src={team.logoUrl}
+                        alt={team.name}
+                        className="w-10 h-10 rounded-xl object-cover relative z-10"
+                      />
+                    ) : (
+                      <Users className="w-8 h-8 text-white relative z-10" />
+                    )}
+                  </div>
+                  
+                  {/* Enhanced Rank Badge */}
+                  <div className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg border-2 border-white/50 group-hover:scale-110 transition-transform duration-300">
+                    <Star className="w-3 h-3 text-yellow-900" />
+                  </div>
+                  
+                  {/* Status Indicator */}
+                  <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg animate-pulse">
+                    <div className="w-full h-full bg-green-400 rounded-full animate-ping opacity-75" />
+                  </div>
                 </div>
-                {/* Compact Rank Badge */}
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                  <Star className="w-2 h-2 text-yellow-900" />
-                </div>
-              </div>
 
-              {/* Team Name + Game Type */}
-              <div className="flex-1 min-w-0">
-                <h3
-                  className="font-bold text-lg text-white mb-1 truncate group-hover:text-yellow-200 transition-colors duration-300"
-                  data-testid={`team-name-${team.id}`}
-                >
-                  {team.name}
-                </h3>
-                <div className="flex items-center gap-2">
-                  {team.gameType && (
-                    <Badge className="bg-black/40 backdrop-blur-sm text-white border-white/20 text-xs px-2 py-0.5 font-medium">
-                      {getGameTypeIcon(team.gameType)} {team.gameType}
+                {/* Enhanced Team Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3
+                      className="font-bold text-xl text-white truncate group-hover:text-yellow-200 transition-colors duration-300 drop-shadow-lg"
+                      data-testid={`team-name-${team.id}`}
+                    >
+                      {team.name}
+                    </h3>
+                    {team.tag && (
+                      <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-xs px-2 py-1 font-bold uppercase tracking-wider">
+                        {team.tag}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* Game Type & Level */}
+                  <div className="flex items-center gap-2">
+                    {team.gameType && (
+                      <Badge className="bg-black/50 backdrop-blur-sm text-white border-white/20 text-sm px-3 py-1 font-medium hover:bg-black/60 transition-colors">
+                        <span className="mr-1">{getGameTypeIcon(team.gameType)}</span>
+                        {team.gameType}
+                      </Badge>
+                    )}
+                    <Badge className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 text-white border-0 text-xs px-2 py-1 font-bold">
+                      LVL {Math.floor(stats.matches / 5) + 1}
                     </Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Center: Members Display */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="flex items-center gap-1">
-                {/* Member Avatars - Mini */}
-                {members.slice(0, 3).map((member: any, index: number) => (
-                  <Avatar key={member.id} className="w-6 h-6 border border-white/30 shadow-sm">
-                    <AvatarImage src={member.user?.profileImageUrl} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
-                      {member.user?.username?.charAt(0).toUpperCase() || "M"}
-                    </AvatarFallback>
-                  </Avatar>
-                ))}
-                {members.length > 3 && (
-                  <div className="w-6 h-6 bg-black/40 rounded-full flex items-center justify-center border border-white/30">
-                    <span className="text-xs font-bold text-white">+{members.length - 3}</span>
-                  </div>
-                )}
-                {members.length === 0 && (
-                  <div className="w-6 h-6 rounded-full bg-black/40 flex items-center justify-center border border-white/30">
-                    <Users className="w-3 h-3 text-white/60" />
-                  </div>
-                )}
-              </div>
-              <span className="text-white/80 text-sm font-medium whitespace-nowrap">
-                {members.length}/{team.maxPlayers}
-              </span>
-            </div>
-
-            {/* Right Side: Join Code + Actions */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Compact Join Code */}
-              <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
-                <div className="text-center">
-                  <div className="text-xs text-white/60 font-medium uppercase tracking-wide">Code</div>
-                  <div className="text-sm font-bold text-white tracking-wider">
-                    {team.teamCode || "DEMO123"}
                   </div>
                 </div>
               </div>
 
-              {/* Compact Actions */}
+              {/* Right: Enhanced Actions */}
               {isOwner && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleCopyTeamCode}
-                    className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
+                    className="h-10 w-10 p-0 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   >
-                    <Copy className="w-3 h-3" />
+                    <Copy className="w-4 h-4" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
+                        className="h-10 w-10 p-0 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                         data-testid={`team-menu-${team.id}`}
                       >
-                        <MoreVertical className="w-3 h-3" />
+                        <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
-                      <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700">
+                    <DropdownMenuContent align="end" className="w-52 bg-slate-800/95 backdrop-blur-lg border-slate-600 shadow-2xl">
+                      <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700/80">
                         <Edit className="w-4 h-4 mr-2" />
                         Edit Team
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700">
+                      <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700/80">
                         <UserPlus className="w-4 h-4 mr-2" />
                         Add Player
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700">
+                      <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700/80">
                         <Copy className="w-4 h-4 mr-2" />
                         Copy Join Code
                       </DropdownMenuItem>
@@ -303,6 +291,54 @@ export default function TeamManagementCard({
                   </DropdownMenu>
                 </div>
               )}
+            </div>
+
+            {/* Bottom Row: Enhanced Members & Join Code */}
+            <div className="flex items-center justify-between gap-4">
+              {/* Enhanced Members Display */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-white/80" />
+                  <span className="text-white/80 text-sm font-medium">Team</span>
+                </div>
+                
+                <div className="flex items-center gap-1">
+                  {members.slice(0, 4).map((member: any, index: number) => (
+                    <Avatar key={member.id} className="w-8 h-8 border-2 border-white/40 shadow-lg hover:scale-110 transition-transform duration-200">
+                      <AvatarImage src={member.user?.profileImageUrl} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
+                        {member.user?.username?.charAt(0).toUpperCase() || "M"}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {members.length > 4 && (
+                    <div className="w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/40 shadow-lg">
+                      <span className="text-xs font-bold text-white">+{members.length - 4}</span>
+                    </div>
+                  )}
+                  {members.length === 0 && (
+                    <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border-2 border-white/40 shadow-lg">
+                      <Users className="w-4 h-4 text-white/60" />
+                    </div>
+                  )}
+                </div>
+                
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm px-3 py-1 font-bold">
+                  {members.length}/{team.maxPlayers}
+                </Badge>
+              </div>
+
+              {/* Enhanced Join Code */}
+              <div className="bg-black/40 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/30 shadow-xl group-hover:bg-black/50 transition-colors duration-300">
+                <div className="text-center">
+                  <div className="text-xs text-white/70 font-semibold uppercase tracking-widest mb-1">
+                    Join Code
+                  </div>
+                  <div className="text-lg font-black text-white tracking-wider font-mono">
+                    {team.teamCode || "DEMO123"}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
