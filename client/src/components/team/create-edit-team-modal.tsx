@@ -71,7 +71,7 @@ export default function CreateEditTeamModal({
     enabled: isEditing && !!team?.id,
   });
 
-  const teamMembers = teamData?.members || [];
+  const teamMembers = (teamData as any)?.members || [];
 
   const {
     register,
@@ -221,27 +221,23 @@ export default function CreateEditTeamModal({
           </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Team Form */}
-          <div className="space-y-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Team Logo Upload */}
-            <div className="flex flex-col items-center space-y-4">
+            <div className="space-y-4">
               <div className="relative">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent p-1">
-                  <div className="w-full h-full rounded-full bg-background flex items-center justify-center overflow-hidden">
-                    {logoPreview ? (
-                      <img 
-                        src={logoPreview} 
-                        alt="Team logo preview" 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Camera className="w-10 h-10 text-muted-foreground" />
-                    )}
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                  <Upload className="w-6 h-6 text-white" />
+                <div className="w-48 h-48 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden hover:bg-gray-50 transition-colors">
+                  {logoPreview ? (
+                    <img 
+                      src={logoPreview} 
+                      alt="Team logo preview" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <Camera className="w-16 h-16 mx-auto mb-2 text-gray-600" />
+                    </div>
+                  )}
                   <input
                     type="file"
                     accept="image/*"
@@ -251,177 +247,128 @@ export default function CreateEditTeamModal({
                   />
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Click to upload team logo<br />
-                <span className="text-xs">(PNG, JPG up to 2MB)</span>
-              </p>
             </div>
+            
+            {/* Team Form */}
+            <div className="lg:col-span-2 space-y-4">
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Team Name */}
-              <div className="space-y-2">
-                <Label htmlFor="name">Team Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter team name"
-                  {...register("name")}
-                  data-testid="team-name-input"
-                />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
-                )}
-              </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                {/* Team Name */}
+                <div className="space-y-2">
+                  <Input
+                    id="name"
+                    placeholder="Team Name"
+                    className="h-12 text-lg bg-gray-100 border-gray-200"
+                    {...register("name")}
+                    data-testid="team-name-input"
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-destructive">{errors.name.message}</p>
+                  )}
+                </div>
 
-              {/* Team Tag */}
-              <div className="space-y-2">
-                <Label htmlFor="tag">Team Tag</Label>
-                <Input
-                  id="tag"
-                  placeholder="e.g. FFA, TXN"
-                  maxLength={8}
-                  {...register("tag")}
-                  data-testid="team-tag-input"
-                />
-                {errors.tag && (
-                  <p className="text-sm text-destructive">{errors.tag.message}</p>
-                )}
-              </div>
+                {/* Game Type */}
+                <div className="space-y-2">
+                  <Select 
+                    value={watch("gameType")} 
+                    onValueChange={(value) => setValue("gameType", value)}
+                  >
+                    <SelectTrigger className="h-12 bg-gray-100 border-gray-200" data-testid="game-type-select">
+                      <SelectValue placeholder="Game" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {gameTypes.map((game) => (
+                        <SelectItem key={game.value} value={game.value}>
+                          <div className="flex items-center gap-2">
+                            <span>{game.icon}</span>
+                            {game.label}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </form>
 
-              {/* Game Type */}
-              <div className="space-y-2">
-                <Label>Game Type *</Label>
-                <Select 
-                  value={watch("gameType")} 
-                  onValueChange={(value) => setValue("gameType", value)}
-                >
-                  <SelectTrigger data-testid="game-type-select">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {gameTypes.map((game) => (
-                      <SelectItem key={game.value} value={game.value}>
-                        <div className="flex items-center gap-2">
-                          <span>{game.icon}</span>
-                          {game.label}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Max Players */}
-              <div className="space-y-2">
-                <Label>Maximum Players</Label>
-                <Select 
-                  value={watch("maxPlayers")?.toString()} 
-                  onValueChange={(value) => setValue("maxPlayers", parseInt(value))}
-                >
-                  <SelectTrigger data-testid="max-players-select">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2">2 Players</SelectItem>
-                    <SelectItem value="3">3 Players</SelectItem>
-                    <SelectItem value="4">4 Players (Recommended)</SelectItem>
-                    <SelectItem value="5">5 Players</SelectItem>
-                    <SelectItem value="6">6 Players</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </form>
-
-            {/* Action Buttons */}
-            {isEditing && (
-              <div className="flex gap-2">
-                <Button 
-                  type="button"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={() => onAddPlayer(team.id)}
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Add Player
-                </Button>
-                <Button 
-                  type="button"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setShowInvited(!showInvited)}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Invited ({0})
-                </Button>
-              </div>
-            )}
+              {/* Action Buttons */}
+              {isEditing && (
+                <div className="flex gap-2">
+                  <Button 
+                    type="button"
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white h-10"
+                    onClick={() => onAddPlayer(team.id)}
+                  >
+                    Add player
+                  </Button>
+                  <Button 
+                    type="button"
+                    className="flex-1 bg-red-400 hover:bg-red-500 text-white h-10"
+                    onClick={() => setShowInvited(!showInvited)}
+                  >
+                    Invited
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Right Column - Team Members */}
+          {/* Team Members Section */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Team Members</h3>
-              <Badge variant="secondary">
-                {teamMembers.length}/{watch("maxPlayers") || 4}
-              </Badge>
-            </div>
+            <h3 className="text-lg font-semibold mb-4">Team Members</h3>
 
             {/* Team Members Grid */}
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {teamMembers.length > 0 ? (
-                teamMembers.map((member: any) => (
+                teamMembers.map((member: any, index: number) => (
                   <div 
                     key={member.id}
-                    className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="bg-white border border-gray-200 rounded-lg p-4 relative hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={member.user?.profileImageUrl} />
-                        <AvatarFallback>
-                          {member.user?.username?.charAt(0).toUpperCase() || 'M'}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium truncate">
-                            {member.user?.username || 'Unknown'}
-                          </p>
-                          {getRoleIcon(member.role)}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {member.user?.phone || 'No phone'}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          ID: {member.user?.gameId || 'No Game ID'}
-                        </p>
+                      <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        {member.user?.username?.charAt(0).toUpperCase() || 'P'}
                       </div>
                       
-                      <div className="flex items-center gap-1">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm mb-1">
+                          {member.user?.username || 'Player name'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {member.user?.phone || '+91 8344819111'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          ID: {member.user?.gameId || '15466DF'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-gray-100"
+                        onClick={() => {/* Handle edit player */}}
+                      >
+                        <Edit3 className="w-3 h-3" />
+                      </Button>
+                      {member.role !== 'captain' && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          onClick={() => {/* Handle edit player */}}
+                          className="h-6 w-6 p-0 hover:bg-red-50 text-red-500"
+                          onClick={() => handleDeletePlayer(member.id, member.user?.username || 'Player')}
                         >
-                          <Edit3 className="w-3 h-3" />
+                          <Trash2 className="w-3 h-3" />
                         </Button>
-                        {member.role !== 'captain' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeletePlayer(member.id, member.user?.username || 'Player')}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 bg-muted/30 rounded-lg">
-                  <Users className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-4">No team members yet</p>
+                <div className="col-span-full text-center py-8 bg-gray-50 rounded-lg">
+                  <Users className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm text-gray-500 mb-4">No team members yet</p>
                   {isEditing && (
                     <Button 
                       variant="outline" 
@@ -436,30 +383,20 @@ export default function CreateEditTeamModal({
               )}
             </div>
 
-            {/* Team Guidelines */}
-            <div className="bg-muted/30 rounded-lg p-4">
-              <h4 className="font-medium mb-2 text-sm">Team Guidelines</h4>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>• Team captain has full management rights</li>
-                <li>• Players can be assigned specific roles</li>
-                <li>• Team code is auto-generated for invites</li>
-                <li>• All members must follow community rules</li>
-              </ul>
-            </div>
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className="gap-3">
           <Button 
             variant="outline" 
             onClick={onClose}
-            className="text-gray-600 border-gray-300 hover:bg-gray-50"
+            className="px-8 py-2 text-gray-600 border-gray-300 hover:bg-gray-50 rounded-lg"
             data-testid="cancel-create-team"
           >
             Cancel
           </Button>
           <Button 
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-8"
+            className="px-8 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-medium"
             onClick={handleSubmit(onSubmit)}
             disabled={createTeamMutation.isPending}
             data-testid="create-team-submit"
