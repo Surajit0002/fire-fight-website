@@ -35,6 +35,81 @@ export default function Teams() {
     enabled: !!user,
   });
 
+  // Sample team data for testing
+  const sampleTeams = [
+    {
+      id: "team-1",
+      name: "Fire Dragons",
+      tag: "FD",
+      logoUrl: null,
+      captainId: "user-1",
+      maxPlayers: 4,
+      gameType: "BGMI",
+      teamCode: "FD2024",
+      createdAt: "2024-01-15T10:00:00Z",
+      stats: {
+        matches: 25,
+        winRate: 76,
+        kills: 1850,
+        tournaments: 5
+      }
+    },
+    {
+      id: "team-2", 
+      name: "Lightning Bolt",
+      tag: "LB",
+      logoUrl: null,
+      captainId: "user-2",
+      maxPlayers: 5,
+      gameType: "Free Fire",
+      teamCode: "LB5432",
+      createdAt: "2024-02-10T14:30:00Z",
+      stats: {
+        matches: 18,
+        winRate: 83,
+        kills: 2240,
+        tournaments: 3
+      }
+    },
+    {
+      id: "team-3",
+      name: "Shadow Warriors", 
+      tag: "SW",
+      logoUrl: null,
+      captainId: "user-3",
+      maxPlayers: 4,
+      gameType: "COD Mobile",
+      teamCode: "SW9876",
+      createdAt: "2024-01-25T09:15:00Z",
+      stats: {
+        matches: 32,
+        winRate: 68,
+        kills: 3420,
+        tournaments: 7
+      }
+    },
+    {
+      id: "team-4",
+      name: "Cyber Titans",
+      tag: "CT", 
+      logoUrl: null,
+      captainId: "user-4",
+      maxPlayers: 5,
+      gameType: "Valorant",
+      teamCode: "CT1357",
+      createdAt: "2024-03-05T16:45:00Z",
+      stats: {
+        matches: 21,
+        winRate: 71,
+        kills: 1680,
+        tournaments: 4
+      }
+    }
+  ];
+
+  // Use sample teams if no real teams exist
+  const teamsToDisplay = userTeams && userTeams.length > 0 ? userTeams : sampleTeams;
+
   // Team operations
   const deleteTeamMutation = useMutation({
     mutationFn: async (teamId: string) => {
@@ -173,13 +248,13 @@ export default function Teams() {
                 My Teams
               </h2>
               <div className="text-sm text-muted-foreground">
-                {userTeams?.length || 0} teams created
+                {teamsToDisplay?.length || 0} teams created
               </div>
             </div>
 
-            {userTeams && userTeams.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="user-teams-grid">
-                {userTeams.map((team: any) => (
+            {teamsToDisplay && teamsToDisplay.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" data-testid="user-teams-grid">
+                {teamsToDisplay.map((team: any) => (
                   <TeamManagementCard 
                     key={team.id} 
                     team={team}
