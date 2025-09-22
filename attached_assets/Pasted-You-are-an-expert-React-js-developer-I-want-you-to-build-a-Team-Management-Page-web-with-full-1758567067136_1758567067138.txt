@@ -1,0 +1,81 @@
+You are an expert React.js developer. I want you to build a **Team Management Page** (web) with full functionality including Create/Edit Team, Add/Edit Player, Team Cards, and Join Team functionality. Use modern React (hooks, functional components) and a styling framework like TailwindCSS. Follow these requirements:
+
+1️⃣ **Modals**
+- **Create Team / Edit Team Modal**:
+  - Header: dynamic title “Create Team” or “Edit Team”, close button (X)
+  - Team Logo Upload: circular placeholder with camera icon
+  - Form fields:
+    - Team Name (text input)
+    - Game Type (dropdown/select with icon)
+  - Buttons:
+    - Add Player → opens Add Player modal
+    - Invited → shows invited members list
+  - Team Members List: grid layout, small player cards with Avatar, Name, Phone, Player ID, Actions: ✏️ Edit, 🗑️ Delete
+  - Footer: Cancel (secondary), Primary: Create Team / Save Changes
+  - Edit Team → pre-fill all existing data
+
+- **Add Player / Edit Player Modal**:
+  - Header: “Add Player” or “Edit Player”
+  - Avatar upload (circle + camera)
+  - Form: Full Name, Role dropdown, Player ID, Phone
+  - Footer: Cancel, Add Player / Save Changes
+  - Edit → pre-fill existing player info
+
+2️⃣ **Team Card**
+- Header:
+  - Team Logo (circle + glow)
+  - Team Name (bold)
+  - Game Type badge
+  - Team Code pill box with copy functionality
+  - Options menu (3 dots): Edit, View, Delete
+- Stats Row (4 pill boxes): Matches, Win Rate, Kills, Tournaments Won
+- Team Members Section: up to 5 avatars visible, role badge overlay, + Add Player button
+- Footer: Timestamp created / last updated
+- UI: Soft gradient background, rounded corners, shadows, hover grow + glow effects
+- Responsive: Grid for desktop, stacked for mobile
+
+3️⃣ **Team Page**
+- Top Buttons:
+  - Create Team → opens modal
+  - Join Team → input Team Code to join
+- Display all existing teams as cards
+- Interactions:
+  - Edit → open Edit Team modal
+  - View → detailed team profile
+  - Delete → confirmation popup
+  - Copy Team Code → toast notification
+  - Hover → player role tooltip
+
+4️⃣ **Functional Requirements**
+- Dynamic updates: add/edit/delete teams and players reflected immediately
+- Pre-filled data when editing
+- Join Team by code adds user to team members list
+- Animated avatars for captains or MVPs
+- Tooltips for stats and player roles
+- Circular progress ring for Win Rate
+
+5️⃣ **Tech Requirements**
+- React.js (functional components + hooks)
+- TailwindCSS for styling
+- State management: Redux or React Context
+- Modular components: TeamCard, PlayerCard, TeamModal, PlayerModal
+- Fully responsive for desktop and mobile
+
+6️⃣ **Deliverables**
+- Full React.js code for:
+  - Team Page screen
+  - Modals (Create/Edit Team, Add/Edit Player)
+  - Team Card component
+  - Player Card component
+  - Interactions: hover, copy, animations, tooltips
+- Include placeholder data for testing
+- Include comments explaining each component and prop usage
+
+🎨 **UI/UX Style**
+- Colors: Red/Blue for primary buttons, Gray for secondary
+- Rounded cards with soft shadows
+- Bold fonts for headers (Poppins/Montserrat)
+- Gradient backgrounds for cards
+- Interactive hover/tap effects
+
+Output **ready-to-use React.js code** with components, screens, and styling for a web app.
