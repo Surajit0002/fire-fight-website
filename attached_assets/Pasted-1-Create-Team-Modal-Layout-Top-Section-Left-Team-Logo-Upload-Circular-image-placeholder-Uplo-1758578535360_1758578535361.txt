@@ -1,0 +1,134 @@
+1️⃣ Create Team Modal
+Layout
+
+Top Section:
+
+Left: Team Logo Upload
+
+Circular image placeholder
+
+Upload button / click-to-upload
+
+Right: Team Info
+
+Team Name (input field)
+
+Game Type (dropdown)
+
+Add Members button → opens Add Player Modal
+
+Optional: Invite members (input emails/usernames)
+
+Middle Section: Team Members Preview
+
+Displays added players as cards:
+
+Player Pic (circular)
+
+Name
+
+Phone
+
+Game ID
+
+Role Badge/Icon
+
+Edit / Delete icons on each card
+
+Bottom Section: Action Buttons
+
+Create Team (primary)
+
+Cancel (secondary)
+
+2️⃣ Add Player Modal
+Layout
+
+Form Fields:
+
+Top Row:
+
+Player Pic Upload (circular)
+
+Name (input)
+
+Role (dropdown or input)
+
+Game ID (input)
+
+Next Row:
+
+Phone (input)
+
+Action Buttons:
+
+Add Player (primary)
+
+Cancel (secondary)
+
+After adding, player is previewed in Team Members Preview in Create Team Modal.
+
+3️⃣ Team Card Model (After Team Creation)
+Top Section
+
+Left: Team Logo
+
+Middle: Team Name & Game Type
+
+Mid: Team Join Code (copyable)
+
+Right: 3-dot menu → Options: Edit, View, Delete
+
+Middle Stats Section
+
+Matches Played
+
+Win Rate
+
+Kills
+
+Tournament Wins
+
+Bottom Section: Team Members
+
+Shows up to 6 profile pics in one row
+
+If <6, empty slots show Add Player icon → opens Add Player Modal
+
+Hover over player pic: show player name
+
+If team creator/admin: show Edit/Delete button overlay on profile pics
+
+4️⃣ Interactions & Flow
+
+Click Create Team → opens Create Team Modal
+
+Fill Team Info, upload logo
+
+Click Add Members → opens Add Player Modal
+
+Add player(s) → player shows in preview section
+
+Repeat until team is complete
+
+Click Create Team → team saved → show Team Card
+
+Team Card Interactions:
+
+3-dot menu → Edit/View/Delete
+
+Hover over members → see name
+
+Admin/creator can edit/delete members
+
+5️⃣ Notes for Implementation
+
+Team Logo & Player Pic: optional compression to reduce file size
+
+Team Card Stats: dynamic based on real match data
+
+Responsive Layout: Team Cards and modals scale for mobile & web
+
+Role Badges: different colors/icons for Captain, Co-Captain, Player, etc.
+
+Add Player Button in Preview: should open Add Player Modal with empty fields
