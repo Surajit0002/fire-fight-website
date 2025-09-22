@@ -272,6 +272,24 @@ export class DatabaseStorage implements IStorage {
     await db.delete(teams).where(eq(teams.id, id));
   }
 
+  async getTeamByCode(teamCode: string): Promise<Team | undefined> {
+    const [team] = await db.select().from(teams).where(eq(teams.teamCode, teamCode));
+    return team;
+  }
+
+  async updateTeam(id: string, data: Partial<Team>): Promise<Team> {
+    const [team] = await db
+      .update(teams)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(teams.id, id))
+      .returning();
+    return team;
+  }
+
+  async deleteTeam(id: string): Promise<void> {
+    await db.delete(teams).where(eq(teams.id, id));
+  }
+
   async getUserTeams(userId: string): Promise<Team[]> {
     return await db
       .select({
@@ -318,6 +336,19 @@ export class DatabaseStorage implements IStorage {
       .from(teamMembers)
       .leftJoin(users, eq(teamMembers.userId, users.id))
       .where(eq(teamMembers.teamId, teamId));
+  }
+
+  async updateTeamMember(memberId: string, data: Partial<TeamMember>): Promise<TeamMember> {
+    const [member] = await db
+      .update(teamMembers)
+      .set(data)
+      .where(eq(teamMembers.id, memberId))
+      .returning();
+    return member;
+  }
+
+  async removeTeamMember(memberId: string): Promise<void> {
+    await db.delete(teamMembers).where(eq(teamMembers.id, memberId));
   }
 
   async updateTeamMember(memberId: string, data: Partial<TeamMember>): Promise<TeamMember> {
