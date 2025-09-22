@@ -433,6 +433,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Development seeding route
+  app.post('/api/seed-database', async (req, res) => {
+    try {
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(403).json({ message: "Seeding not allowed in production" });
+      }
+      
+      const { seedDatabase } = await import('./seed');
+      await seedDatabase();
+      res.json({ message: "Database seeded successfully" });
+    } catch (error) {
+      console.error("Seeding error:", error);
+      res.status(500).json({ message: "Failed to seed database" });
+    }
+  });
+
   // Admin routes
   app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
     try {

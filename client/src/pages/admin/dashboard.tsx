@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminSidebar from "@/components/admin/admin-sidebar";
 import StatsCard from "@/components/admin/stats-card";
 import LoadingSpinner from "@/components/ui/loading-spinner";
@@ -16,7 +16,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Activity
+  Activity,
+  Database
 } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
 
   const { data: dashboardStats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/stats/dashboard"],
@@ -43,6 +45,31 @@ export default function AdminDashboard() {
   const { data: recentTransactions, isLoading: transactionsLoading } = useQuery({
     queryKey: ["/api/admin/transactions", { limit: 10 }],
     enabled: !!user?.isAdmin,
+  });
+
+  const seedDatabaseMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/seed-database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to seed database");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Database seeded with sample tournaments and data",
+      });
+      queryClient.invalidateQueries();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to seed database",
+        variant: "destructive",
+      });
+    },
   });
 
   // Redirect if not admin
@@ -93,7 +120,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background">
       <div className="flex">
         <AdminSidebar />
-        
+
         <main className="flex-1 ml-64">
           {/* Header */}
           <div className="bg-card border-b border-border p-6">
@@ -235,7 +262,18 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Tournaments</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Recent Tournaments</CardTitle>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => seedDatabaseMutation.mutate()}
+                      disabled={seedDatabaseMutation.isPending}
+                      className="flex items-center gap-2"
+                    >
+                      <Database className="w-4 h-4" />
+                      {seedDatabaseMutation.isPending ? "Seeding..." : "Seed Database"}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {recentTournaments && recentTournaments.length > 0 ? (

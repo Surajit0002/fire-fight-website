@@ -26,7 +26,9 @@ import {
   AlertCircle,
   Eye,
   MessageCircle,
-  Trophy
+  Trophy,
+  Flag,
+  FileImage
 } from "lucide-react";
 
 export default function MyMatches() {

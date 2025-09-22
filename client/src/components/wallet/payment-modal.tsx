@@ -154,7 +154,7 @@ export default function PaymentModal({
       title: "Payment Successful!",
       description: `₹${amount.toLocaleString('en-IN')} has been added to your wallet.`,
     });
-    
+
     // Auto close after 3 seconds
     setTimeout(() => {
       onClose();
@@ -222,7 +222,7 @@ export default function PaymentModal({
                   data-testid="amount-input"
                 />
               </div>
-              
+
               {/* Quick Amount Buttons */}
               <div className="grid grid-cols-3 gap-2">
                 {quickAmounts.map((quickAmount) => (
@@ -237,7 +237,7 @@ export default function PaymentModal({
                   </Button>
                 ))}
               </div>
-              
+
               <div className="text-xs text-muted-foreground">
                 Minimum: ₹10 • Maximum: ₹50,000
               </div>
@@ -322,7 +322,7 @@ export default function PaymentModal({
             <div className="w-16 h-16 gradient-fire rounded-full flex items-center justify-center mx-auto">
               <CheckCircle className="w-8 h-8 text-black" />
             </div>
-            
+
             <div>
               <h3 className="text-2xl font-bold mb-2">Payment Successful!</h3>
               <p className="text-muted-foreground">
