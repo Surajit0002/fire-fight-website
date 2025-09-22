@@ -171,123 +171,138 @@ export default function TeamManagementCard({
       <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${getGameTypeGradient(team.gameType || 'bgmi')} blur-xl`} />
 
       <CardContent className="relative p-0">
-        {/* Header Section with Game Type Gradient */}
-        <div className={`relative px-6 py-5 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
+        {/* Compact Header Section - All in One Row */}
+        <div className={`relative px-4 py-4 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
           {/* Header Background Pattern */}
           <div className="absolute inset-0 bg-black/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           
-          <div className="relative flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              {/* Enhanced Team Logo */}
-              <div className="relative">
-                <div className="w-16 h-16 rounded-2xl bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/20 group-hover:scale-110 transition-transform duration-300">
+          <div className="relative flex items-center justify-between gap-3">
+            {/* Left Side: Logo + Team Info */}
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              {/* Compact Team Logo */}
+              <div className="relative flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-xl border border-white/20 group-hover:scale-105 transition-transform duration-300">
                   {team.logoUrl ? (
                     <img
                       src={team.logoUrl}
                       alt={team.name}
-                      className="w-12 h-12 rounded-xl object-cover"
+                      className="w-8 h-8 rounded-md object-cover"
                     />
                   ) : (
-                    <Users className="w-8 h-8 text-white" />
+                    <Users className="w-6 h-6 text-white" />
                   )}
                 </div>
-                {/* Rank Badge */}
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                  <Star className="w-3 h-3 text-yellow-900" />
+                {/* Compact Rank Badge */}
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                  <Star className="w-2 h-2 text-yellow-900" />
                 </div>
               </div>
 
-              {/* Team Info */}
-              <div>
+              {/* Team Name + Game Type */}
+              <div className="flex-1 min-w-0">
                 <h3
-                  className="font-bold text-xl text-white mb-2 group-hover:text-yellow-200 transition-colors duration-300"
+                  className="font-bold text-lg text-white mb-1 truncate group-hover:text-yellow-200 transition-colors duration-300"
                   data-testid={`team-name-${team.id}`}
                 >
                   {team.name}
                 </h3>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   {team.gameType && (
-                    <Badge className="bg-black/40 backdrop-blur-sm text-white border-white/20 text-xs px-3 py-1 font-medium">
+                    <Badge className="bg-black/40 backdrop-blur-sm text-white border-white/20 text-xs px-2 py-0.5 font-medium">
                       {getGameTypeIcon(team.gameType)} {team.gameType}
                     </Badge>
                   )}
-                  <span className="text-white/80 text-sm font-medium">
-                    {members.length}/{team.maxPlayers} members
-                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Enhanced Actions Menu */}
-            {isOwner && (
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopyTeamCode}
-                  className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
-                      data-testid={`team-menu-${team.id}`}
-                    >
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
-                    <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Team
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700">
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Add Player
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700">
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy Join Code
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => onDelete(team.id)}
-                      className="text-red-400 hover:bg-red-500/20"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete Team
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+            {/* Center: Members Display */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-1">
+                {/* Member Avatars - Mini */}
+                {members.slice(0, 3).map((member: any, index: number) => (
+                  <Avatar key={member.id} className="w-6 h-6 border border-white/30 shadow-sm">
+                    <AvatarImage src={member.user?.profileImageUrl} />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
+                      {member.user?.username?.charAt(0).toUpperCase() || "M"}
+                    </AvatarFallback>
+                  </Avatar>
+                ))}
+                {members.length > 3 && (
+                  <div className="w-6 h-6 bg-black/40 rounded-full flex items-center justify-center border border-white/30">
+                    <span className="text-xs font-bold text-white">+{members.length - 3}</span>
+                  </div>
+                )}
+                {members.length === 0 && (
+                  <div className="w-6 h-6 rounded-full bg-black/40 flex items-center justify-center border border-white/30">
+                    <Users className="w-3 h-3 text-white/60" />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+              <span className="text-white/80 text-sm font-medium whitespace-nowrap">
+                {members.length}/{team.maxPlayers}
+              </span>
+            </div>
 
-          {/* Team Code Section */}
-          <div className="mt-4 p-3 bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
-                  Join Code
-                </span>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-lg font-bold text-white tracking-wider">
+            {/* Right Side: Join Code + Actions */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Compact Join Code */}
+              <div className="bg-black/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
+                <div className="text-center">
+                  <div className="text-xs text-white/60 font-medium uppercase tracking-wide">Code</div>
+                  <div className="text-sm font-bold text-white tracking-wider">
                     {team.teamCode || "DEMO123"}
-                  </span>
+                  </div>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopyTeamCode}
-                className="h-8 w-8 p-0 hover:bg-white/20 text-white"
-              >
-                <Copy className="w-4 h-4" />
-              </Button>
+
+              {/* Compact Actions */}
+              {isOwner && (
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyTeamCode}
+                    className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
+                        data-testid={`team-menu-${team.id}`}
+                      >
+                        <MoreVertical className="w-3 h-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
+                      <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit Team
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700">
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Add Player
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700">
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy Join Code
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onDelete(team.id)}
+                        className="text-red-400 hover:bg-red-500/20"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Team
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
             </div>
           </div>
         </div>
