@@ -35,6 +35,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   username: varchar("username").unique(),
   gameId: varchar("game_id"),
+  phone: varchar("phone"),
   country: varchar("country"),
   walletBalance: decimal("wallet_balance", { precision: 10, scale: 2 }).default("0.00"),
   kycStatus: varchar("kyc_status").default("pending"), // pending, verified, rejected

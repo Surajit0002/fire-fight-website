@@ -199,8 +199,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/teams', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      
+      // Handle both form data and JSON
+      const data = req.body;
+      
       const validatedData = insertTeamSchema.parse({
-        ...req.body,
+        name: data.name,
+        tag: data.tag || null,
+        gameType: data.gameType || "BGMI",
+        maxPlayers: parseInt(data.maxPlayers) || 4,
         captainId: userId,
         teamCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
       });

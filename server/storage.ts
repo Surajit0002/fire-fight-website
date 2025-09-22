@@ -274,7 +274,18 @@ export class DatabaseStorage implements IStorage {
 
   async getUserTeams(userId: string): Promise<Team[]> {
     return await db
-      .select()
+      .select({
+        id: teams.id,
+        name: teams.name,
+        tag: teams.tag,
+        logoUrl: teams.logoUrl,
+        gameType: teams.gameType,
+        teamCode: teams.teamCode,
+        captainId: teams.captainId,
+        maxPlayers: teams.maxPlayers,
+        createdAt: teams.createdAt,
+        updatedAt: teams.updatedAt,
+      })
       .from(teams)
       .where(eq(teams.captainId, userId))
       .orderBy(desc(teams.createdAt));
