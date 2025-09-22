@@ -17,11 +17,10 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { CreditCard, Wallet, Shield, CheckCircle } from "lucide-react";
 
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// Make Stripe optional
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+  : null;
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -93,6 +92,9 @@ export default function PaymentModal({
   const [clientSecret, setClientSecret] = useState("");
   const [step, setStep] = useState<'amount' | 'payment' | 'success'>('amount');
 
+  // Check if Stripe is available
+  const isStripeAvailable = !!stripePromise;
+
   const quickAmounts = [100, 250, 500, 1000, 2500, 5000];
 
   const createPaymentMutation = useMutation({
@@ -117,6 +119,14 @@ export default function PaymentModal({
   });
 
   const handleProceedToPayment = () => {
+    if (!isStripeAvailable) {
+      toast({
+        title: "Payment Not Available",
+        description: "Payment processing is currently not configured",
+        variant: "destructive",
+      });
+      return;
+    }
     if (amount < 10) {
       toast({
         title: "Invalid Amount",
@@ -259,8 +269,12 @@ export default function PaymentModal({
             <div className="bg-muted/30 rounded-lg p-4 flex items-center gap-3">
               <Shield className="w-5 h-5 text-green-500" />
               <div className="text-sm">
-                <div className="font-medium">100% Secure Payment</div>
-                <div className="text-muted-foreground">Protected by Stripe encryption</div>
+                <div className="font-medium">
+                  {isStripeAvailable ? "100% Secure Payment" : "Payment Unavailable"}
+                </div>
+                <div className="text-muted-foreground">
+                  {isStripeAvailable ? "Protected by Stripe encryption" : "Payment processing not configured"}
+                </div>
               </div>
             </div>
 
@@ -268,15 +282,16 @@ export default function PaymentModal({
             <Button 
               className="w-full gradient-fire text-black font-bold hover:scale-105 transition-transform"
               onClick={handleProceedToPayment}
-              disabled={amount < 10 || amount > 50000 || createPaymentMutation.isPending}
+              disabled={!isStripeAvailable || amount < 10 || amount > 50000 || createPaymentMutation.isPending}
               data-testid="proceed-to-payment"
             >
-              {createPaymentMutation.isPending ? "Preparing..." : "Proceed to Payment"}
+              {!isStripeAvailable ? "Payment Not Available" :
+               createPaymentMutation.isPending ? "Preparing..." : "Proceed to Payment"}
             </Button>
           </div>
         )}
 
-        {step === 'payment' && clientSecret && (
+        {step === 'payment' && clientSecret && stripePromise && (
           <div className="space-y-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-gradient mb-2">₹{amount.toLocaleString('en-IN')}</div>

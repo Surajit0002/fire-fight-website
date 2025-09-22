@@ -52,7 +52,7 @@ export default function JoinModal({
     enabled: isOpen && !!user,
   });
 
-  const entryFee = parseFloat(tournament.entryFee);
+  const entryFee = parseFloat(tournament?.entryFee || '0');
   const currentBalance = parseFloat(walletBalance?.balance || '0');
   const hasEnoughBalance = currentBalance >= entryFee;
 
@@ -74,8 +74,8 @@ export default function JoinModal({
     }
   };
 
-  const canJoinAsTeam = tournament.gameMode?.toLowerCase().includes('team') || 
-                       tournament.gameMode?.toLowerCase().includes('squad');
+  const canJoinAsTeam = tournament?.gameMode?.toLowerCase().includes('team') || 
+                       tournament?.gameMode?.toLowerCase().includes('squad');
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

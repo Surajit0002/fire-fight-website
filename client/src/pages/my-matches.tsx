@@ -14,19 +14,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Trophy, 
+  Target, 
+  Upload, 
   Clock, 
-  Users, 
-  Target,
-  Eye,
-  Upload,
-  FileImage,
-  AlertCircle,
+  Calendar,
+  Users,
+  MapPin,
+  DollarSign,
   CheckCircle,
   XCircle,
-  Calendar,
-  DollarSign,
-  Flag
+  AlertCircle,
+  Eye,
+  MessageCircle,
+  Trophy
 } from "lucide-react";
 
 export default function MyMatches() {
@@ -159,7 +159,7 @@ export default function MyMatches() {
                 </span>
               )}
             </div>
-            
+
             {showActions && (
               <div className="flex items-center gap-2">
                 {tournament.status === 'live' && tournament.isRoomCodeRevealed && tournament.roomCode && (
@@ -218,7 +218,7 @@ export default function MyMatches() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-primary/10 via-accent/5 to-destructive/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
