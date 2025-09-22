@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +28,8 @@ import {
   User,
   TrendingUp,
   Award,
+  Star,
+  Flame,
 } from "lucide-react";
 
 interface TeamManagementCardProps {
@@ -80,35 +83,52 @@ export default function TeamManagementCard({
     tournaments: 3,
   };
 
-  const getGameTypeColor = (gameType: string) => {
+  const getGameTypeGradient = (gameType: string) => {
     switch (gameType?.toLowerCase()) {
       case "bgmi":
-        return "bg-blue-500";
+        return "bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700";
       case "free fire":
-        return "bg-orange-500";
+        return "bg-gradient-to-br from-orange-500 via-red-500 to-pink-600";
       case "cod mobile":
-        return "bg-green-500";
+        return "bg-gradient-to-br from-green-500 via-emerald-600 to-teal-700";
       case "valorant":
-        return "bg-red-500";
+        return "bg-gradient-to-br from-red-500 via-pink-600 to-purple-700";
       case "pubg mobile":
-        return "bg-purple-500";
+        return "bg-gradient-to-br from-purple-500 via-indigo-600 to-blue-700";
       default:
-        return "bg-gray-500";
+        return "bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700";
+    }
+  };
+
+  const getGameTypeIcon = (gameType: string) => {
+    switch (gameType?.toLowerCase()) {
+      case "bgmi":
+        return "🎮";
+      case "free fire":
+        return "🔥";
+      case "cod mobile":
+        return "⚡";
+      case "valorant":
+        return "🎯";
+      case "pubg mobile":
+        return "🏆";
+      default:
+        return "🎮";
     }
   };
 
   const getRoleIcon = (role: string) => {
     switch (role?.toLowerCase()) {
       case "captain":
-        return <Crown className="w-3 h-3 text-yellow-500" />;
+        return <Crown className="w-3 h-3 text-yellow-400" />;
       case "igl":
-        return <Target className="w-3 h-3 text-blue-500" />;
+        return <Target className="w-3 h-3 text-blue-400" />;
       case "fragger":
-        return <Zap className="w-3 h-3 text-red-500" />;
+        return <Flame className="w-3 h-3 text-red-400" />;
       case "support":
-        return <Shield className="w-3 h-3 text-green-500" />;
+        return <Shield className="w-3 h-3 text-green-400" />;
       default:
-        return <User className="w-3 h-3 text-gray-500" />;
+        return <User className="w-3 h-3 text-gray-400" />;
     }
   };
 
@@ -117,7 +137,7 @@ export default function TeamManagementCard({
     navigator.clipboard.writeText(code);
     onCopyCode(code);
     toast({
-      title: "Team Code Copied!",
+      title: "Team Code Copied! ✨",
       description: "Share this code with players to join your team",
     });
   };
@@ -130,149 +150,183 @@ export default function TeamManagementCard({
     });
   };
 
+  const getWinRateColor = (winRate: number) => {
+    if (winRate >= 80) return "text-green-400";
+    if (winRate >= 60) return "text-blue-400";
+    if (winRate >= 40) return "text-yellow-400";
+    return "text-red-400";
+  };
+
   return (
     <Card
-      className="bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 group overflow-hidden"
+      className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-slate-700 hover:border-slate-600 transition-all duration-500 ease-out transform hover:scale-105 hover:shadow-2xl group overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`team-card-${team.id}`}
     >
-      <CardContent className="p-0">
-        {/* Header Section */}
-        <div className="relative p-6 bg-gradient-to-br from-gray-50 to-gray-100">
-          <div className="flex items-start justify-between mb-4">
+      {/* Animated Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
+      
+      {/* Glow Effect */}
+      <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${getGameTypeGradient(team.gameType || 'bgmi')} blur-xl`} />
+
+      <CardContent className="relative p-0">
+        {/* Header Section with Game Type Gradient */}
+        <div className={`relative px-6 py-5 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
+          {/* Header Background Pattern */}
+          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          
+          <div className="relative flex items-start justify-between">
             <div className="flex items-center gap-4">
-              {/* Team Logo */}
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                {team.logoUrl ? (
-                  <img
-                    src={team.logoUrl}
-                    alt={team.name}
-                    className="w-12 h-12 rounded-lg object-cover"
-                  />
-                ) : (
-                  <Users className="w-8 h-8 text-white" />
-                )}
+              {/* Enhanced Team Logo */}
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-white/20 group-hover:scale-110 transition-transform duration-300">
+                  {team.logoUrl ? (
+                    <img
+                      src={team.logoUrl}
+                      alt={team.name}
+                      className="w-12 h-12 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <Users className="w-8 h-8 text-white" />
+                  )}
+                </div>
+                {/* Rank Badge */}
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                  <Star className="w-3 h-3 text-yellow-900" />
+                </div>
               </div>
 
               {/* Team Info */}
               <div>
                 <h3
-                  className="font-bold text-xl text-gray-900 mb-1"
+                  className="font-bold text-xl text-white mb-2 group-hover:text-yellow-200 transition-colors duration-300"
                   data-testid={`team-name-${team.id}`}
                 >
                   {team.name}
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {team.gameType && (
-                    <Badge
-                      className={`${getGameTypeColor(team.gameType)} text-white text-xs px-2 py-1`}
-                    >
-                      {team.gameType}
+                    <Badge className="bg-black/40 backdrop-blur-sm text-white border-white/20 text-xs px-3 py-1 font-medium">
+                      {getGameTypeIcon(team.gameType)} {team.gameType}
                     </Badge>
                   )}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-white/80 text-sm font-medium">
                     {members.length}/{team.maxPlayers} members
                   </span>
                 </div>
               </div>
             </div>
-            {/* Team Join Code */}
-            <div className="bg-white/70 rounded-lg p-3 backdrop-blur-sm">
-              <div className=" flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                    Join Code
-                  </span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-lg font-bold text-gray-900">
-                      {team.teamCode || "DEMO123"}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleCopyTeamCode}
-                      className="h-6 w-6 p-0 hover:bg-gray-200"
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Actions Menu */}
-          {isOwner && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+
+            {/* Enhanced Actions Menu */}
+            {isOwner && (
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 hover:bg-white/50"
-                  data-testid={`team-menu-${team.id}`}
+                  onClick={handleCopyTeamCode}
+                  className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
                 >
-                  <MoreVertical className="w-4 h-4" />
+                  <Copy className="w-4 h-4" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => onEdit(team)}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Team
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onAddPlayer(team.id)}>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Add Player
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleCopyTeamCode}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Join Code
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => onDelete(team.id)}
-                  className="text-red-600"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Team
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm"
+                      data-testid={`team-menu-${team.id}`}
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
+                    <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Team
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700">
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Add Player
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700">
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy Join Code
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => onDelete(team.id)}
+                      className="text-red-400 hover:bg-red-500/20"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Team
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+          </div>
 
-        {/* Stats Section */}
-        <div className="px-6 py-4 bg-white">
-          <div className="grid grid-cols-4 gap-3">
-            <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-lg font-bold text-blue-600">
-                {stats.matches}
+          {/* Team Code Section */}
+          <div className="mt-4 p-3 bg-black/20 backdrop-blur-sm rounded-xl border border-white/10">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                  Join Code
+                </span>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-lg font-bold text-white tracking-wider">
+                    {team.teamCode || "DEMO123"}
+                  </span>
+                </div>
               </div>
-              <div className="text-xs text-blue-800 font-medium">Matches</div>
-            </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-lg font-bold text-green-600">
-                {stats.winRate}%
-              </div>
-              <div className="text-xs text-green-800 font-medium">Win Rate</div>
-            </div>
-            <div className="text-center p-3 bg-red-50 rounded-lg">
-              <div className="text-lg font-bold text-red-600">
-                {(stats.kills / 1000).toFixed(1)}k
-              </div>
-              <div className="text-xs text-red-800 font-medium">Kills</div>
-            </div>
-            <div className="text-center p-3 bg-yellow-50 rounded-lg">
-              <div className="text-lg font-bold text-yellow-600">
-                {stats.tournaments}
-              </div>
-              <div className="text-xs text-yellow-800 font-medium">Wins</div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyTeamCode}
+                className="h-8 w-8 p-0 hover:bg-white/20 text-white"
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Team Members Section */}
-        <div className="px-6 py-4 bg-gray-50">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-gray-700">
+        {/* Enhanced Stats Section */}
+        <div className="px-6 py-5 bg-slate-800/50 backdrop-blur-sm">
+          <div className="grid grid-cols-4 gap-3">
+            <div className="text-center p-3 bg-gradient-to-br from-blue-500/20 to-blue-600/30 rounded-xl border border-blue-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+              <div className="text-lg font-bold text-blue-300 mb-1">
+                {stats.matches}
+              </div>
+              <div className="text-xs text-blue-200 font-medium">Matches</div>
+            </div>
+            <div className="text-center p-3 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-xl border border-green-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+              <div className={`text-lg font-bold mb-1 ${getWinRateColor(stats.winRate)}`}>
+                {stats.winRate}%
+              </div>
+              <div className="text-xs text-green-200 font-medium">Win Rate</div>
+            </div>
+            <div className="text-center p-3 bg-gradient-to-br from-red-500/20 to-red-600/30 rounded-xl border border-red-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+              <div className="text-lg font-bold text-red-300 mb-1">
+                {(stats.kills / 1000).toFixed(1)}k
+              </div>
+              <div className="text-xs text-red-200 font-medium">Kills</div>
+            </div>
+            <div className="text-center p-3 bg-gradient-to-br from-yellow-500/20 to-yellow-600/30 rounded-xl border border-yellow-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+              <div className="text-lg font-bold text-yellow-300 mb-1">
+                {stats.tournaments}
+              </div>
+              <div className="text-xs text-yellow-200 font-medium">Wins</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Team Members Section */}
+        <div className="px-6 py-5 bg-slate-900/50">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-bold text-white flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-400" />
               Team Members
             </span>
             {members.length < team.maxPlayers && isOwner && (
@@ -280,7 +334,7 @@ export default function TeamManagementCard({
                 variant="outline"
                 size="sm"
                 onClick={() => onAddPlayer(team.id)}
-                className="h-7 px-2 text-xs"
+                className="h-8 px-3 text-xs bg-blue-500/20 border-blue-400/30 text-blue-300 hover:bg-blue-500/30 hover:border-blue-400/50"
               >
                 <UserPlus className="w-3 h-3 mr-1" />
                 Add
@@ -289,29 +343,31 @@ export default function TeamManagementCard({
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Member Avatars */}
+            {/* Enhanced Member Avatars */}
             {members.slice(0, 6).map((member: any, index: number) => (
-              <div key={member.id} className="relative group">
-                <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
+              <div key={member.id} className="relative group/member">
+                <Avatar className="w-10 h-10 border-2 border-slate-600 hover:border-blue-400 shadow-lg transition-all duration-300 hover:scale-110">
                   <AvatarImage src={member.user?.profileImageUrl} />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-semibold">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm font-bold">
                     {member.user?.username?.charAt(0).toUpperCase() || "M"}
                   </AvatarFallback>
                 </Avatar>
 
-                {/* Role Icon */}
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
+                {/* Enhanced Role Icon */}
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-slate-800 rounded-full flex items-center justify-center shadow-lg border border-slate-600">
                   {getRoleIcon(member.role)}
                 </div>
 
-                {/* Hover Card */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
-                  {member.user?.username || "Unknown"} ({member.role})
+                {/* Enhanced Hover Card */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover/member:opacity-100 transition-all duration-300 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap z-20 border border-slate-600 shadow-xl">
+                  <div className="font-semibold">{member.user?.username || "Unknown"}</div>
+                  <div className="text-slate-300 capitalize">{member.role}</div>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
                 </div>
               </div>
             ))}
 
-            {/* Empty Slots */}
+            {/* Enhanced Empty Slots */}
             {Array.from({
               length: Math.max(0, team.maxPlayers - members.length),
             })
@@ -319,16 +375,16 @@ export default function TeamManagementCard({
               .map((_, index) => (
                 <div
                   key={`empty-${index}`}
-                  className="w-8 h-8 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center cursor-pointer hover:border-blue-400 transition-colors"
+                  className="w-10 h-10 border-2 border-dashed border-slate-600 hover:border-blue-400 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-500/20 transition-all duration-300 hover:scale-110 group/empty"
                   onClick={() => onAddPlayer(team.id)}
                 >
-                  <UserPlus className="w-3 h-3 text-gray-400" />
+                  <UserPlus className="w-4 h-4 text-slate-400 group-hover/empty:text-blue-400" />
                 </div>
               ))}
 
             {members.length > 6 && (
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <span className="text-xs font-semibold text-gray-600">
+              <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center border border-slate-600 shadow-lg">
+                <span className="text-xs font-bold text-white">
                   +{members.length - 6}
                 </span>
               </div>
@@ -336,18 +392,19 @@ export default function TeamManagementCard({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-3 bg-white border-t border-gray-100">
-          <div className="flex items-center gap-1 text-xs text-gray-500">
+        {/* Enhanced Footer */}
+        <div className="flex items-center justify-between px-6 py-4 bg-slate-900 border-t border-slate-700">
+          <div className="flex items-center gap-2 text-xs text-slate-400">
             <Calendar className="w-3 h-3" />
             Created {formatDate(team.createdAt)}
           </div>
 
           {stats.tournaments > 0 && (
-            <div className="flex items-center gap-1 text-xs text-yellow-600">
-              <Trophy className="w-3 h-3" />
-              {stats.tournaments} Tournament{stats.tournaments > 1 ? "s" : ""}{" "}
-              Won
+            <div className="flex items-center gap-2 text-xs font-medium">
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              <span className="text-yellow-300">
+                {stats.tournaments} Tournament{stats.tournaments > 1 ? "s" : ""} Won
+              </span>
             </div>
           )}
         </div>
