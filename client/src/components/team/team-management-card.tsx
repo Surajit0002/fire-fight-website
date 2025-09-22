@@ -1,32 +1,33 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Users, 
-  Crown, 
   MoreVertical, 
   Edit,
-  Eye,
   Trash2,
-  UserPlus,
   Copy,
   Trophy,
   Target,
-  Zap,
   Calendar,
-  Star
+  UserPlus,
+  Crown,
+  Zap,
+  Shield,
+  User,
+  TrendingUp,
+  Award,
 } from "lucide-react";
 
 interface TeamManagementCardProps {
@@ -65,272 +66,243 @@ export default function TeamManagementCard({
   isOwner 
 }: TeamManagementCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { toast } = useToast();
 
-  const { data: teamMembers } = useQuery({
+  const { data: teamData } = useQuery({
     queryKey: ["/api/teams", team.id],
   });
 
-  const members = teamMembers?.members || [];
+  const members = teamData?.members || [];
   const captain = members.find((m: any) => m.role === 'captain');
-  const stats = team.stats || { matches: 0, winRate: 0, kills: 0, tournaments: 0 };
+  const stats = team.stats || { matches: 15, winRate: 73, kills: 1247, tournaments: 3 };
 
   const getGameTypeColor = (gameType: string) => {
     switch (gameType?.toLowerCase()) {
       case 'bgmi': return 'bg-blue-500';
       case 'free fire': return 'bg-orange-500';
       case 'cod mobile': return 'bg-green-500';
-      default: return 'bg-purple-500';
+      case 'valorant': return 'bg-red-500';
+      case 'pubg mobile': return 'bg-purple-500';
+      default: return 'bg-gray-500';
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleIcon = (role: string) => {
     switch (role?.toLowerCase()) {
-      case 'captain': return 'bg-yellow-500 text-black';
-      case 'igl': return 'bg-blue-500 text-white';
-      case 'fragger': return 'bg-red-500 text-white';
-      case 'support': return 'bg-green-500 text-white';
-      default: return 'bg-gray-500 text-white';
+      case 'captain': return <Crown className="w-3 h-3 text-yellow-500" />;
+      case 'igl': return <Target className="w-3 h-3 text-blue-500" />;
+      case 'fragger': return <Zap className="w-3 h-3 text-red-500" />;
+      case 'support': return <Shield className="w-3 h-3 text-green-500" />;
+      default: return <User className="w-3 h-3 text-gray-500" />;
     }
+  };
+
+  const handleCopyTeamCode = () => {
+    const code = team.teamCode || "DEMO123";
+    navigator.clipboard.writeText(code);
+    onCopyCode(code);
+    toast({
+      title: "Team Code Copied!",
+      description: "Share this code with players to join your team",
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: '2-digit', 
+      year: 'numeric'
+    });
   };
 
   return (
     <Card 
-      className={`
-        bg-gradient-to-br from-card to-card/50 border-border 
-        hover:border-primary/50 transition-all duration-300 group relative overflow-hidden
-        ${isHovered ? 'shadow-2xl shadow-primary/20 scale-105' : 'shadow-lg'}
-      `}
+      className="bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 group overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`team-card-${team.id}`}
     >
-      {/* Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      <CardHeader className="pb-3 relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Team Logo with Glow */}
-            <div className="relative">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent p-1">
-                <div className="w-full h-full rounded-full bg-card flex items-center justify-center overflow-hidden">
-                  {team.logoUrl ? (
-                    <img src={team.logoUrl} alt={team.name} className="w-10 h-10 rounded-full object-cover" />
-                  ) : (
-                    <Users className="w-6 h-6 text-primary" />
-                  )}
-                </div>
-              </div>
-              {isOwner && (
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <Crown className="w-3 h-3 text-black" />
-                </div>
-              )}
-            </div>
-            
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-lg font-bold text-foreground" data-testid={`team-name-${team.id}`}>
-                  {team.name}
-                </h3>
-                {team.tag && (
-                  <Badge variant="secondary" className="text-xs" data-testid={`team-tag-${team.id}`}>
-                    {team.tag}
-                  </Badge>
+      <CardContent className="p-0">
+        {/* Header Section */}
+        <div className="relative p-6 bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-4">
+              {/* Team Logo */}
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                {team.logoUrl ? (
+                  <img src={team.logoUrl} alt={team.name} className="w-12 h-12 rounded-lg object-cover" />
+                ) : (
+                  <Users className="w-8 h-8 text-white" />
                 )}
               </div>
               
-              <div className="flex items-center gap-2">
-                {team.gameType && (
-                  <Badge className={`${getGameTypeColor(team.gameType)} text-white text-xs`}>
-                    {team.gameType}
-                  </Badge>
-                )}
-                {team.teamCode && (
+              {/* Team Info */}
+              <div>
+                <h3 className="font-bold text-xl text-gray-900 mb-1" data-testid={`team-name-${team.id}`}>
+                  {team.name}
+                  {team.tag && <span className="ml-2 text-blue-600">[{team.tag}]</span>}
+                </h3>
+                <div className="flex items-center gap-2">
+                  {team.gameType && (
+                    <Badge className={`${getGameTypeColor(team.gameType)} text-white text-xs px-2 py-1`}>
+                      {team.gameType}
+                    </Badge>
+                  )}
+                  <span className="text-sm text-gray-500">
+                    {members.length}/{team.maxPlayers} members
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions Menu */}
+            {isOwner && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 hover:bg-white/50"
+                    data-testid={`team-menu-${team.id}`}
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => onEdit(team)}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Team
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onAddPlayer(team.id)}>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Add Player
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCopyTeamCode}>
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Join Code
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onDelete(team.id)} className="text-red-600">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Team
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+
+          {/* Team Join Code */}
+          <div className="bg-white/70 rounded-lg p-3 backdrop-blur-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">Join Code</span>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-lg font-bold text-gray-900">{team.teamCode || "DEMO123"}</span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 px-2 text-xs bg-muted hover:bg-muted/80"
-                    onClick={() => onCopyCode(team.teamCode!)}
-                    data-testid={`copy-code-${team.id}`}
+                    onClick={handleCopyTeamCode}
+                    className="h-6 w-6 p-0 hover:bg-gray-200"
                   >
-                    <span className="mr-1">{team.teamCode}</span>
                     <Copy className="w-3 h-3" />
                   </Button>
-                )}
+                </div>
               </div>
             </div>
           </div>
-          
-          {/* Options Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" data-testid={`team-menu-${team.id}`}>
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(team)}>
-                <Edit className="w-4 h-4 mr-2" />
-                Edit Team
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Eye className="w-4 h-4 mr-2" />
-                View Details
-              </DropdownMenuItem>
-              {isOwner && (
-                <DropdownMenuItem 
-                  className="text-destructive"
-                  onClick={() => onDelete(team.id)}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Team
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="relative z-10">
-        {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-2 mb-4">
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="bg-muted/50 rounded-lg p-2 text-center hover:bg-muted/70 transition-colors">
-                <div className="text-lg font-bold text-primary">{stats.matches}</div>
-                <div className="text-xs text-muted-foreground">Matches</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Total matches played</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="bg-muted/50 rounded-lg p-2 text-center hover:bg-muted/70 transition-colors">
-                <div className="text-lg font-bold text-green-500">{stats.winRate}%</div>
-                <div className="text-xs text-muted-foreground">Win Rate</div>
-                <Progress value={stats.winRate} className="h-1 mt-1" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Team win percentage</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="bg-muted/50 rounded-lg p-2 text-center hover:bg-muted/70 transition-colors">
-                <div className="text-lg font-bold text-red-500">{stats.kills}</div>
-                <div className="text-xs text-muted-foreground">Kills</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Total team kills</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="bg-muted/50 rounded-lg p-2 text-center hover:bg-muted/70 transition-colors">
-                <div className="text-lg font-bold text-yellow-500">{stats.tournaments}</div>
-                <div className="text-xs text-muted-foreground">Trophies</div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Tournaments won</TooltipContent>
-          </Tooltip>
         </div>
 
-        {/* Team Members */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Team Members</span>
-            <span className="text-xs text-muted-foreground">
-              {members.length}/{team.maxPlayers} players
-            </span>
+        {/* Stats Section */}
+        <div className="px-6 py-4 bg-white">
+          <div className="grid grid-cols-4 gap-3">
+            <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <div className="text-lg font-bold text-blue-600">{stats.matches}</div>
+              <div className="text-xs text-blue-800 font-medium">Matches</div>
+            </div>
+            <div className="text-center p-3 bg-green-50 rounded-lg">
+              <div className="text-lg font-bold text-green-600">{stats.winRate}%</div>
+              <div className="text-xs text-green-800 font-medium">Win Rate</div>
+            </div>
+            <div className="text-center p-3 bg-red-50 rounded-lg">
+              <div className="text-lg font-bold text-red-600">{(stats.kills / 1000).toFixed(1)}k</div>
+              <div className="text-xs text-red-800 font-medium">Kills</div>
+            </div>
+            <div className="text-center p-3 bg-yellow-50 rounded-lg">
+              <div className="text-lg font-bold text-yellow-600">{stats.tournaments}</div>
+              <div className="text-xs text-yellow-800 font-medium">Wins</div>
+            </div>
           </div>
-          
-          {/* Member Avatars */}
-          <div className="flex items-center gap-2">
-            {members.slice(0, 5).map((member: any, index: number) => (
-              <Tooltip key={member.id}>
-                <TooltipTrigger>
-                  <div className="relative">
-                    <Avatar 
-                      className={`w-10 h-10 border-2 border-card ${
-                        member.role === 'captain' ? 'ring-2 ring-yellow-500' : ''
-                      }`}
-                    >
-                      <AvatarImage src={member.user?.profileImageUrl} />
-                      <AvatarFallback>
-                        {member.user?.username?.charAt(0).toUpperCase() || 'M'}
-                      </AvatarFallback>
-                    </Avatar>
-                    {member.role && (
-                      <div className={`absolute -bottom-1 -right-1 px-1 py-0.5 rounded-full text-xs font-bold ${getRoleBadgeColor(member.role)}`}>
-                        {member.role === 'captain' ? <Crown className="w-2 h-2" /> : 
-                         member.role === 'igl' ? <Target className="w-2 h-2" /> :
-                         member.role === 'fragger' ? <Zap className="w-2 h-2" /> :
-                         <Star className="w-2 h-2" />}
-                      </div>
-                    )}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div>
-                    <p className="font-medium">{member.user?.username || 'Unknown'}</p>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            ))}
-            
-            {members.length > 5 && (
-              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                <span className="text-xs font-medium">+{members.length - 5}</span>
-              </div>
-            )}
-            
-            {/* Add Player Button */}
+        </div>
+
+        {/* Team Members Section */}
+        <div className="px-6 py-4 bg-gray-50">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-700">Team Members</span>
             {members.length < team.maxPlayers && isOwner && (
               <Button
                 variant="outline"
                 size="sm"
-                className="w-10 h-10 rounded-full p-0 border-dashed border-2 hover:border-primary"
                 onClick={() => onAddPlayer(team.id)}
-                data-testid={`add-player-${team.id}`}
+                className="h-7 px-2 text-xs"
               >
-                <UserPlus className="w-4 h-4" />
+                <UserPlus className="w-3 h-3 mr-1" />
+                Add
               </Button>
             )}
           </div>
           
-          {/* No Members State */}
-          {members.length === 0 && (
-            <div className="text-center py-4">
-              <Users className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mb-2">No members yet</p>
-              {isOwner && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onAddPlayer(team.id)}
-                >
-                  <UserPlus className="w-4 h-4 mr-1" />
-                  Add Players
-                </Button>
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Member Avatars */}
+            {members.slice(0, 6).map((member: any, index: number) => (
+              <div key={member.id} className="relative group">
+                <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
+                  <AvatarImage src={member.user?.profileImageUrl} />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-semibold">
+                    {member.user?.username?.charAt(0).toUpperCase() || 'M'}
+                  </AvatarFallback>
+                </Avatar>
+                
+                {/* Role Icon */}
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  {getRoleIcon(member.role)}
+                </div>
+
+                {/* Hover Card */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                  {member.user?.username || 'Unknown'} ({member.role})
+                </div>
+              </div>
+            ))}
+            
+            {/* Empty Slots */}
+            {Array.from({ length: Math.max(0, team.maxPlayers - members.length) }).slice(0, 6 - members.length).map((_, index) => (
+              <div 
+                key={`empty-${index}`} 
+                className="w-8 h-8 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center cursor-pointer hover:border-blue-400 transition-colors"
+                onClick={() => onAddPlayer(team.id)}
+              >
+                <UserPlus className="w-3 h-3 text-gray-400" />
+              </div>
+            ))}
+
+            {members.length > 6 && (
+              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                <span className="text-xs font-semibold text-gray-600">+{members.length - 6}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between px-6 py-3 bg-white border-t border-gray-100">
+          <div className="flex items-center gap-1 text-xs text-gray-500">
             <Calendar className="w-3 h-3" />
-            Created {new Date(team.createdAt).toLocaleDateString('en-IN')}
+            Created {formatDate(team.createdAt)}
           </div>
           
           {stats.tournaments > 0 && (
-            <div className="flex items-center gap-1 text-xs text-yellow-500">
+            <div className="flex items-center gap-1 text-xs text-yellow-600">
               <Trophy className="w-3 h-3" />
-              {stats.tournaments} Wins
+              {stats.tournaments} Tournament{stats.tournaments > 1 ? 's' : ''} Won
             </div>
           )}
         </div>

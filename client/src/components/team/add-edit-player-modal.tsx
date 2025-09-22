@@ -13,25 +13,24 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { 
-  Upload, 
   Camera, 
   Crown,
   Target,
   Zap,
   Shield,
   User,
-  X
+  X,
+  UserPlus,
 } from "lucide-react";
 
 const addPlayerSchema = z.object({
-  username: z.string().min(1, "Full name is required"),
+  username: z.string().min(1, "Player name is required"),
   role: z.string().min(1, "Role is required"),
-  gameId: z.string().min(1, "Player ID is required"),
+  gameId: z.string().min(1, "Game ID is required"),
   phone: z.string().min(10, "Valid phone number is required"),
 });
 
@@ -71,7 +70,6 @@ export default function AddEditPlayerModal({
     },
   });
 
-  // Pre-fill form when editing
   useEffect(() => {
     if (isEditing && player) {
       setValue("username", player.user?.username || "");
@@ -159,49 +157,44 @@ export default function AddEditPlayerModal({
     { value: "support", label: "Support", icon: <Shield className="w-4 h-4" />, color: "text-green-500" },
   ];
 
-  const getRoleDescription = (role: string) => {
-    switch (role) {
-      case "captain": return "Team leader with full management rights";
-      case "igl": return "Strategic leader who makes in-game calls";
-      case "fragger": return "Aggressive player focused on eliminations";
-      case "support": return "Utility player who assists the team";
-      default: return "Regular team member";
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md" data-testid="add-edit-player-modal">
-        <DialogHeader>
+      <DialogContent className="max-w-lg" data-testid="add-edit-player-modal">
+        <DialogHeader className="px-6 py-4 border-b">
           <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <User className="w-6 h-6" />
+            <DialogTitle className="flex items-center gap-3 text-xl font-bold">
+              <div className="w-8 h-8 gradient-electric rounded-lg flex items-center justify-center">
+                <UserPlus className="w-5 h-5 text-black" />
+              </div>
               {isEditing ? "Edit Player" : "Add Player"}
             </DialogTitle>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 hover:bg-gray-100"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Avatar Upload */}
-          <div className="flex flex-col items-center">
+        <div className="px-6 py-6">
+          {/* Player Avatar Upload */}
+          <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer hover:bg-gray-300 transition-colors">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 border-4 border-dashed border-gray-300 hover:border-blue-400 transition-colors flex items-center justify-center overflow-hidden cursor-pointer group">
                 {avatarPreview ? (
                   <img 
                     src={avatarPreview} 
-                    alt="Avatar preview" 
+                    alt="Player avatar" 
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <Camera className="w-12 h-12 text-gray-600" />
+                  <div className="text-center">
+                    <Camera className="w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors mb-1" />
+                    <span className="text-xs text-gray-500 font-medium">Photo</span>
+                  </div>
                 )}
                 <input
                   type="file"
@@ -215,98 +208,119 @@ export default function AddEditPlayerModal({
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Full Name */}
-            <div>
+            {/* Player Name */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Player Name</label>
               <Input
-                id="username"
-                placeholder="Full Name"
-                className="h-12 bg-gray-100 border-0 text-base"
+                placeholder="Enter player name"
+                className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
                 {...register("username")}
                 data-testid="player-username-input"
               />
               {errors.username && (
-                <p className="text-sm text-destructive mt-1">{errors.username.message}</p>
+                <p className="text-sm text-red-500">{errors.username.message}</p>
               )}
             </div>
 
-            {/* Player Role and Player ID - Side by side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Player Role */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Role</label>
                 <Select 
                   value={watch("role")} 
                   onValueChange={(value) => setValue("role", value)}
                 >
-                  <SelectTrigger className="h-12 bg-gray-100 border-0 text-base" data-testid="player-role-select">
-                    <SelectValue placeholder="Player Role" />
+                  <SelectTrigger 
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500" 
+                    data-testid="player-role-select"
+                  >
+                    <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
                     {playerRoles.map((role) => (
                       <SelectItem key={role.value} value={role.value}>
                         <div className="flex items-center gap-2">
                           <span className={role.color}>{role.icon}</span>
-                          {role.label}
+                          <span className="truncate">{role.label}</span>
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {errors.role && (
-                  <p className="text-sm text-destructive mt-1">{errors.role.message}</p>
+                  <p className="text-sm text-red-500">{errors.role.message}</p>
                 )}
               </div>
               
-              <div>
+              {/* Game ID */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Game ID</label>
                 <Input
-                  id="gameId"
-                  placeholder="Player ID"
-                  className="h-12 bg-gray-100 border-0 text-base"
+                  placeholder="Game ID"
+                  className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
                   {...register("gameId")}
                   data-testid="player-game-id-input"
                 />
                 {errors.gameId && (
-                  <p className="text-sm text-destructive mt-1">{errors.gameId.message}</p>
+                  <p className="text-sm text-red-500">{errors.gameId.message}</p>
                 )}
               </div>
             </div>
 
-            {/* Player Phone */}
-            <div>
+            {/* Phone Number */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Phone Number</label>
               <Input
-                id="phone"
                 type="tel"
-                placeholder="Player Phone"
-                className="h-12 bg-gray-100 border-0 text-base"
+                placeholder="Enter phone number"
+                className="h-12 text-base bg-white border-gray-200 focus:border-blue-500"
                 {...register("phone")}
                 data-testid="player-phone-input"
               />
               {errors.phone && (
-                <p className="text-sm text-destructive mt-1">{errors.phone.message}</p>
+                <p className="text-sm text-red-500">{errors.phone.message}</p>
               )}
             </div>
-          </form>
 
+            {/* Role Description */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                {playerRoles.find(r => r.value === watch("role"))?.icon}
+                <span className="font-medium text-sm">Role Description</span>
+              </div>
+              <p className="text-xs text-gray-600">
+                {watch("role") === "captain" && "Team leader with full management rights"}
+                {watch("role") === "igl" && "Strategic leader who makes in-game calls"}
+                {watch("role") === "fragger" && "Aggressive player focused on eliminations"}
+                {watch("role") === "support" && "Utility player who assists the team"}
+                {watch("role") === "player" && "Regular team member"}
+              </p>
+            </div>
+          </form>
         </div>
 
-        <DialogFooter className="gap-3 pt-4">
-          <Button 
-            variant="outline" 
-            onClick={onClose}
-            className="flex-1 h-12 text-gray-600 border-gray-300 hover:bg-gray-50 rounded-lg"
-            data-testid="cancel-add-player"
-          >
-            Cancel
-          </Button>
-          <Button 
-            className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-            onClick={handleSubmit(onSubmit)}
-            disabled={addPlayerMutation.isPending}
-            data-testid="add-player-submit"
-          >
-            {addPlayerMutation.isPending ? 
-              (isEditing ? "Saving..." : "Adding...") : 
-              (isEditing ? "Save Changes" : "Add Player")
-            }
-          </Button>
+        <DialogFooter className="px-6 py-4 border-t bg-gray-50">
+          <div className="flex gap-3 w-full">
+            <Button 
+              variant="outline" 
+              onClick={onClose}
+              className="flex-1 h-12 font-medium"
+              data-testid="cancel-add-player"
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="flex-1 h-12 gradient-electric text-black font-bold hover:scale-105 transition-transform"
+              onClick={handleSubmit(onSubmit)}
+              disabled={addPlayerMutation.isPending}
+              data-testid="add-player-submit"
+            >
+              {addPlayerMutation.isPending ? 
+                (isEditing ? "Saving..." : "Adding...") : 
+                (isEditing ? "Save Changes" : "Add Player")
+              }
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
