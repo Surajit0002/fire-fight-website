@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Header from "@/components/layout/header";
+import MobileHeader from "@/components/layout/mobile-header";
+import MobileNav from "@/components/layout/mobile-nav";
 import Footer from "@/components/layout/footer";
 import PaymentModal from "@/components/wallet/payment-modal";
 import LoadingSpinner from "@/components/ui/loading-spinner";
@@ -141,6 +143,7 @@ export default function WalletPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MobileHeader />
       
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-primary/10 via-accent/5 to-destructive/10">
@@ -408,6 +411,7 @@ export default function WalletPage() {
       </section>
 
       <Footer />
+      <MobileNav />
 
       {/* Add Funds Modal */}
       <PaymentModal 

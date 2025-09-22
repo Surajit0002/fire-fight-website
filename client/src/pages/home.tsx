@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/layout/header";
+import MobileHeader from "@/components/layout/mobile-header";
+import MobileNav from "@/components/layout/mobile-nav";
 import Footer from "@/components/layout/footer";
 import TournamentGrid from "@/components/tournament/tournament-grid";
 import LiveMatchCard from "@/components/matches/live-match-card";
@@ -39,6 +41,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MobileHeader />
       
       {/* Hero Section */}
       <section className="relative bg-background py-20 overflow-hidden">
@@ -272,6 +275,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      <MobileNav />
     </div>
   );
 }

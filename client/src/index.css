@@ -25,7 +25,7 @@
   --radius: 12px;
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  
+
   /* Fire theme colors */
   --fire-50: hsl(22, 100%, 96%);
   --fire-100: hsl(23, 100%, 92%);
@@ -37,11 +37,11 @@
   --fire-700: hsl(17, 88%, 40%);
   --fire-800: hsl(15, 80%, 34%);
   --fire-900: hsl(15, 75%, 28%);
-  
+
   /* Victory green */
   --victory: hsl(142, 71%, 45%);
   --victory-foreground: hsl(220, 13%, 9%);
-  
+
   /* Electric blue */
   --electric: hsl(199, 89%, 48%);
   --electric-foreground: hsl(220, 13%, 9%);
@@ -120,11 +120,41 @@
   }
 
   .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse-glow 1.5s ease-in-out infinite;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-accent to-destructive bg-clip-text text-transparent;
+  }
+
+  /* Mobile-specific utilities */
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-pl {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-area-pr {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Mobile navigation spacing */
+  .mobile-content {
+    @apply pb-20 md:pb-0;
+  }
+
+  .mobile-page {
+    @apply pt-16 md:pt-0;
   }
 
   @keyframes glow {

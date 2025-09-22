@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Header from "@/components/layout/header";
+import MobileHeader from "@/components/layout/mobile-header";
+import MobileNav from "@/components/layout/mobile-nav";
 import Footer from "@/components/layout/footer";
 import TournamentGrid from "@/components/tournament/tournament-grid";
 import LoadingSpinner from "@/components/ui/loading-spinner";
@@ -58,6 +60,7 @@ export default function Tournaments() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MobileHeader />
       
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-primary/10 via-accent/5 to-destructive/10">
@@ -245,6 +248,7 @@ export default function Tournaments() {
       </section>
 
       <Footer />
+      <MobileNav />
     </div>
   );
 }
