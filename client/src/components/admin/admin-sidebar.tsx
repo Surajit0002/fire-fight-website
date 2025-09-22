@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import NotificationCenter from "@/components/admin/notification-center";
 import { 
   Zap, 
   LayoutDashboard,
@@ -12,8 +13,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  Shield,
-  Bell
+  Shield
 } from "lucide-react";
 
 export default function AdminSidebar() {
@@ -92,9 +92,7 @@ export default function AdminSidebar() {
           <Badge className="bg-green-500/20 text-green-400 text-xs">
             Online
           </Badge>
-          <Button variant="ghost" size="sm" className="p-1" data-testid="admin-notifications">
-            <Bell className="w-4 h-4" />
-          </Button>
+          <NotificationCenter />
         </div>
       </div>
 

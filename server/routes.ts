@@ -513,6 +513,328 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin analytics endpoints
+  app.get('/api/admin/analytics', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const timeRange = req.query.timeRange || '7d';
+      const reportType = req.query.reportType || 'overview';
+      
+      // Mock analytics data - replace with real analytics logic
+      const analyticsData = {
+        overview: {
+          dailyActiveUsers: 1234,
+          dailyRevenue: 45670,
+          activeTournaments: 18,
+          conversionRate: 3.4
+        },
+        trends: [
+          { date: '2024-01-01', users: 45, revenue: 2400, tournaments: 8 },
+          { date: '2024-01-02', users: 52, revenue: 3200, tournaments: 12 },
+          { date: '2024-01-03', users: 38, revenue: 1800, tournaments: 6 },
+          { date: '2024-01-04', users: 65, revenue: 4200, tournaments: 15 },
+          { date: '2024-01-05', users: 78, revenue: 5600, tournaments: 18 },
+          { date: '2024-01-06', users: 95, revenue: 7200, tournaments: 22 },
+          { date: '2024-01-07', users: 88, revenue: 6800, tournaments: 20 },
+        ]
+      };
+      
+      res.json(analyticsData);
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
+  // Admin settings endpoints
+  app.get('/api/admin/settings', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Mock settings - replace with real settings storage
+      const settings = {
+        general: {
+          platformName: "FireFight Arena",
+          platformUrl: "https://firefightarena.com",
+          supportEmail: "support@firefightarena.com",
+          registrationOpen: true,
+          maintenanceMode: false
+        },
+        payment: {
+          platformFee: 5.0,
+          minWithdrawal: 100,
+          maxWithdrawal: 50000,
+          autoPayouts: false
+        },
+        email: {
+          smtpHost: "smtp.gmail.com",
+          smtpPort: 587,
+          emailNotifications: true
+        },
+        security: {
+          sessionTimeout: 60,
+          maxLoginAttempts: 5,
+          require2FA: true,
+          rateLimiting: true,
+          ipWhitelist: false
+        }
+      };
+      
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      res.status(500).json({ message: "Failed to fetch settings" });
+    }
+  });
+
+  app.put('/api/admin/settings', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Mock settings update - replace with real settings storage
+      console.log("Settings update:", req.body);
+      
+      res.json({ message: "Settings updated successfully" });
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      res.status(500).json({ message: "Failed to update settings" });
+    }
+  });
+
+  // Admin user management endpoints
+  app.patch('/api/admin/users/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { userId } = req.params;
+      const updates = req.body;
+      
+      // Mock user update - replace with real user update logic
+      console.log(`Updating user ${userId}:`, updates);
+      
+      res.json({ message: "User updated successfully" });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.patch('/api/admin/users/:userId/kyc', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { userId } = req.params;
+      const { status, notes } = req.body;
+      
+      // Mock KYC update - replace with real KYC update logic
+      console.log(`Updating KYC for user ${userId}:`, { status, notes });
+      
+      res.json({ message: "KYC status updated successfully" });
+    } catch (error) {
+      console.error("Error updating KYC:", error);
+      res.status(500).json({ message: "Failed to update KYC status" });
+    }
+  });
+
+  // Admin wallet management
+  app.post('/api/admin/wallet/adjust', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { userId, type, amount, reason } = req.body;
+      
+      // Mock wallet adjustment - replace with real wallet adjustment logic
+      console.log(`Wallet adjustment for user ${userId}:`, { type, amount, reason });
+      
+      res.json({ message: "Wallet adjusted successfully" });
+    } catch (error) {
+      console.error("Error adjusting wallet:", error);
+      res.status(500).json({ message: "Failed to adjust wallet" });
+    }
+  });
+
+  // Admin tournament management
+  app.patch('/api/admin/tournaments/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const tournamentId = req.params.id;
+      const updates = req.body;
+      
+      // Mock tournament update - replace with real tournament update logic
+      console.log(`Updating tournament ${tournamentId}:`, updates);
+      
+      res.json({ message: "Tournament updated successfully" });
+    } catch (error) {
+      console.error("Error updating tournament:", error);
+      res.status(500).json({ message: "Failed to update tournament" });
+    }
+  });
+
+  app.delete('/api/admin/tournaments/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const tournamentId = req.params.id;
+      
+      // Mock tournament deletion - replace with real tournament deletion logic
+      console.log(`Deleting tournament ${tournamentId}`);
+      
+      res.json({ message: "Tournament deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting tournament:", error);
+      res.status(500).json({ message: "Failed to delete tournament" });
+    }
+  });
+
+  // Admin withdrawal management
+  app.get('/api/admin/withdrawals/pending', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Mock pending withdrawals - replace with real data
+      const pendingWithdrawals = [];
+      
+      res.json(pendingWithdrawals);
+    } catch (error) {
+      console.error("Error fetching pending withdrawals:", error);
+      res.status(500).json({ message: "Failed to fetch pending withdrawals" });
+    }
+  });
+
+  app.post('/api/admin/withdrawals/:transactionId/approve', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { transactionId } = req.params;
+      
+      // Mock withdrawal approval - replace with real approval logic
+      console.log(`Approving withdrawal ${transactionId}`);
+      
+      res.json({ message: "Withdrawal approved successfully" });
+    } catch (error) {
+      console.error("Error approving withdrawal:", error);
+      res.status(500).json({ message: "Failed to approve withdrawal" });
+    }
+  });
+
+  app.post('/api/admin/withdrawals/:transactionId/reject', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const { transactionId } = req.params;
+      
+      // Mock withdrawal rejection - replace with real rejection logic
+      console.log(`Rejecting withdrawal ${transactionId}`);
+      
+      res.json({ message: "Withdrawal rejected successfully" });
+    } catch (error) {
+      console.error("Error rejecting withdrawal:", error);
+      res.status(500).json({ message: "Failed to reject withdrawal" });
+    }
+  });
+
+  // Admin wallet statistics
+  app.get('/api/admin/wallet/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Mock wallet statistics - replace with real calculations
+      const walletStats = {
+        totalDeposits: 125000,
+        totalWithdrawals: 75000,
+        platformRevenue: 12500,
+        pendingWithdrawals: 0
+      };
+      
+      res.json(walletStats);
+    } catch (error) {
+      console.error("Error fetching wallet stats:", error);
+      res.status(500).json({ message: "Failed to fetch wallet statistics" });
+    }
+  });
+
+  // Email testing endpoint
+  app.post('/api/admin/test-email', isAuthenticated, async (req: any, res) => {
+    try {
+      const adminId = req.user.claims.sub;
+      const admin = await storage.getUser(adminId);
+      
+      if (!admin?.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Mock email test - replace with real email sending logic
+      console.log("Sending test email to admin");
+      
+      res.json({ message: "Test email sent successfully" });
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ message: "Failed to send test email" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup

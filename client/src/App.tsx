@@ -18,6 +18,7 @@ import AdminDashboard from "@/pages/admin/dashboard";
 import AdminTournaments from "@/pages/admin/tournaments";
 import AdminUsers from "@/pages/admin/users";
 import AdminWallets from "@/pages/admin/wallets";
+import { lazy } from "react";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -36,12 +37,14 @@ function Router() {
           <Route path="/leaderboard" component={Leaderboard} />
           <Route path="/profile" component={Profile} />
           <Route path="/my-matches" component={MyMatches} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin" component={AdminDashboard} />
           <Route path="/admin/tournaments" component={AdminTournaments} />
           <Route path="/admin/users" component={AdminUsers} />
           <Route path="/admin/wallets" component={AdminWallets} />
+          <Route path="/admin/analytics" component={lazy(() => import("@/pages/admin/analytics"))} />
+          <Route path="/admin/settings" component={lazy(() => import("@/pages/admin/settings"))} />
         </>
       )}
       <Route component={NotFound} />

@@ -17,7 +17,9 @@ import {
   CheckCircle,
   XCircle,
   Activity,
-  Database
+  Database,
+  BarChart3,
+  Settings
 } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
@@ -253,6 +255,14 @@ export default function AdminDashboard() {
                   <Button variant="outline" className="w-full justify-start" data-testid="system-settings">
                     <Activity className="w-4 h-4 mr-2" />
                     System Settings
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" data-testid="view-analytics">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    View Analytics
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" data-testid="platform-settings">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Platform Settings
                   </Button>
                 </CardContent>
               </Card>
