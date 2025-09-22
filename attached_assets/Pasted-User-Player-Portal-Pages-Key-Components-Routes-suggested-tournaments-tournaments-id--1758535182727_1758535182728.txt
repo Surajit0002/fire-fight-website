@@ -1,0 +1,377 @@
+User (Player) Portal — Pages & Key Components
+
+Routes suggested: /, /tournaments, /tournaments/:id, /join/:id, /my-matches, /teams, /team/create, /wallet, /profile, /leaderboard, /history, /support, /notifications
+
+Home / Landing (/)
+
+Hero: CTA (Browse tournaments / Create team / Top winners)
+
+Quick filters: Upcoming | Ongoing | Cash | Free
+
+Featured tournaments carousel
+
+Quick stats: active players, total prize pool
+
+Latest winners / recent match highlights
+
+Footer: T&C, Privacy, Contact, Socials
+
+Tournament Listing (/tournaments)
+
+Grid/list with cards: thumbnail, title, entry fee, prize pool, slots left, start time, status badge (Upcoming/Ongoing/Finished)
+
+Filters: Game, Region, Mode, Entry fee range, Date, Platform (PC/Mobile), Slot availability
+
+Sort: Popular / New / Prize pool / Start time
+
+Pagination / infinite scroll
+
+“Create alert” or “Remind me” button
+
+Tournament Detail (/tournaments/:id)
+
+Header: title, host, match date/time, slots, entry fee, prize distribution (tabular), map/mode, rules summary
+
+Tabs: Overview | Rules & Map | Room & Instructions | Participants | Chat/Announcements
+
+Join button (opens Join/Payment modal)
+
+Host info + trust signals (verification badge, past tournaments)
+
+Countdown timer and room-code reveal area (if applicable)
+
+Live match embed / stream link (if streaming)
+
+FAQ & dispute policy for this tournament
+
+Join / Payment Flow (/join/:tournamentId modal or route)
+
+Step 1: Confirm team / solo entry; show seat count
+
+Step 2: Payment: Wallet balance / UPI / Card / Third-party (integrate Razorpay/Stripe/Paytm)
+
+Step 3: Confirmation & Ticket (unique entry ID); send email & push notification
+
+If room-codes are released: show room code only at scheduled time to participants
+
+Refund/cancellation policy displayed clearly
+
+My Matches / My Tournaments (/my-matches)
+
+Upcoming (with start times), Ongoing (live status), Completed (results & payouts)
+
+Quick actions: view room code, match report, claim payout, raise dispute
+
+Filters & search
+
+Team Management (/teams, /team/create)
+
+Create Team modal: logo upload, name, tag, invite players (max players per team), roles (captain)
+
+Team page: roster grid (profile pic, game id, role), join requests, invites pending, edit team
+
+Invite flow via link + accept/decline notifications
+
+Leaderboard (/leaderboard)
+
+Global top players and teams (podium UI)
+
+Filters: weekly / monthly / all-time, by region or game
+
+Player profile quick-view
+
+Wallet (/wallet)
+
+Balance (cash), transaction history, deposit (payment gateways), withdraw (KYC required)
+
+Buttons: Add money, Withdraw
+
+Transaction table with status (processing / completed / failed)
+
+Promo & refunds history
+
+Profile (/profile)
+
+Personal info, game IDs, country/region
+
+KYC upload & verification status (Aadhaar/PAN/ID uploads)
+
+Connected payment methods
+
+Settings: notifications, privacy, change password
+
+Referral / Invite & Earn section
+
+Match Reporting & Results (/matches/:id/report)
+
+Upload screenshot/proof, enter match stats (kills, placement), submit for verification
+
+Auto-match vs manual verification
+
+View adjudication status & outcome
+
+Notifications (/notifications)
+
+System messages, tournament announcements, payment updates
+
+Mark read / dismiss / filter by type
+
+History / Transaction & Spin (Activity) (/history)
+
+All past activity: joined tournaments, wins, cash ins/outs, refunds
+
+Support / Disputes (/support)
+
+Create ticket: issue type (payment, match, KYC), attach screenshots
+
+Chat with support (or ticketing system) and ticket history
+
+Help / FAQ / Rules (/help)
+
+Game-specific rules, dispute policy, matchmaking rules, fair play policy, anti-cheat
+
+Public Player Profile (/player/:id)
+
+Public stats, past wins, rank, badges, teams
+
+Referrals & Promotions (/referral)
+
+Referral code, earnings, copy/share buttons, terms
+
+Admin Contact / Legal Pages (accessible to users)
+
+Terms & Conditions, Privacy Policy, Responsible Gaming
+
+Admin Panel — Pages & Key Components
+
+Suggested admin routes: /admin, /admin/tournaments, /admin/users, /admin/teams, /admin/wallets, /admin/matches, /admin/analytics, /admin/support, /admin/settings
+
+Admin Dashboard (/admin)
+
+Snapshot KPIs: active tournaments, total deposits/withdrawals (24h), pending withdrawals, live players, disputes open, daily revenue
+
+Charts: revenue trend, tournaments created, signups
+
+Quick actions: create tournament, resolve withdrawals, broadcast announcement
+
+Tournaments Management (/admin/tournaments)
+
+Table & filters (status, host, start date, prize pool, entry fee)
+
+Create / Edit tournament form:
+
+Title, game, region, mode, max teams/players, start time, duration, maps, rounds
+
+Prize distribution (flat, percentile), entry fee
+
+Auto room-code generation or manual room code
+
+Rules, anti-cheat toggles, spectator/stream links
+
+Refund policy, cancellation toggles
+
+Bulk actions: start now, cancel, refund all
+
+Room code release scheduling (auto on start or manual)
+
+Host/organizer assignment
+
+Users Management (/admin/users)
+
+Table: ID, name, email, mobile, game ID(s), KYC status, wallet balance, status (active/banned/suspended)
+
+Actions: ban/unban, adjust wallet (credit/debit with reason), reset password, impersonate (view-as for troubleshooting), export CSV
+
+KYC queue and verification panel (approve/reject with notes)
+
+Teams Management (/admin/teams)
+
+Team list, view roster, approve/reject team creation (if required)
+
+Manage invites, transfer captaincy, disband team
+
+Wallets & Payments (/admin/wallets)
+
+Transaction ledger, filter by user/tournament/type (deposit/withdraw/refund)
+
+Manual adjustments with audit reason & admin note
+
+Withdrawal requests queue: approve / reject / view KYC
+
+Integrations status (Razorpay/Stripe/Payout provider)
+
+Refund handling
+
+Matches & Results (/admin/matches)
+
+Live match monitor (show currently ongoing matches, participants)
+
+Match results ingestion: auto (via API) or manual result entry
+
+Verification queue for submitted proofs (screenshots), support adjudication tools
+
+Distribute prize payouts after verification (auto/manual)
+
+Dispute & Support Tickets (/admin/support)
+
+Ticket queue with priority, status, assigned agent
+
+In-ticket action buttons: refund, adjust wallet, escalate, ban
+
+Templates for common replies
+
+SLA / metrics view
+
+Reports & Analytics (/admin/analytics)
+
+Revenue by day/week/month, ARPU, retention, conversion (views → joins)
+
+Tournament performance: fill-rate, avg prize pool, cancel rate
+
+Player metrics: top performers, suspicious behavior analytics
+
+Exportable CSV/Excel and scheduled report emails
+
+Fraud, Anti-Cheat & Moderation (/admin/moderation)
+
+Suspicious activity flagged (multiple accounts, impossible stats)
+
+Ban management: temporary/permanent bans, ban reasons, appeals management
+
+IP/device fingerprints, duplicate identity checks
+
+Automated rule engine (e.g., if player uses same IP + same device for multiple accounts → flag)
+
+Promotions & Coupons (/admin/promos)
+
+Create promo codes, campaigns, referral bonuses, leaderboard rewards
+
+Schedule campaigns and track redemption metrics
+
+Content Management (/admin/cms)
+
+Manage static pages: Help, T&C, Privacy, banners, announcements
+
+Edit tournament templates and pre-made messages
+
+Announcements & Push Notifications (/admin/notifications)
+
+Create broadcast: email, push, in-app banner targeted by segment (country, new users, high-value)
+
+Scheduled announcements, history & analytics
+
+Roles & Permissions (/admin/roles)
+
+RBAC: Super-admin, Finance, Moderator, Support Agent, Tournament Manager, Analytics
+
+Assign granular permissions to restrict access
+
+Integrations & Settings (/admin/settings)
+
+Payment gateways, payout providers, streaming integrations (YouTube/Twitch)
+
+Game-specific configs: match format presets, allowed maps, match time windows
+
+Webhooks & API keys, admin contact info, branding
+
+Audit Logs & Activity (/admin/audit)
+
+Immutable log of admin actions (who changed what & when)
+
+Downloadable for compliance
+
+System Health (/admin/health)
+
+API status, queue backlog, payment provider status, error logs
+
+Key UI / Data Patterns (both panels)
+
+Top nav + left sidebar for admin; compact mobile-friendly top nav for user.
+
+Card-based tournament view so same UI can be used in app and web.
+
+Tables with server-side pagination, sort, and advanced filters in admin.
+
+Toasts & confirmations for destructive actions; require reason on wallet adjustments.
+
+Role-based access control enforced on frontend UI and backend.
+
+Real-time features: push notifications, websockets for live match updates and room-code release.
+
+Uploads: screenshots for proof, team logos — limit size, virus scan, and image validation.
+
+Auditability: every wallet change and admin action stores an audit entry.
+
+Example Important Flows (step-by-step)
+
+A. Player: Join + Play
+
+User clicks Join on tournament page → opens Join modal
+
+Select solo or team; confirm team roster
+
+Review entry fee & prize split
+
+Pay via wallet or gateway → transaction record created
+
+Confirmation screen shows ticket ID + scheduled start
+
+At match start, room code revealed only to joined players (or via secure channel)
+
+Player plays, reports result (if required) → result verification queue
+
+After verification, payout processed to winners
+
+B. Admin: Create Tournament
+
+Admin clicks Create Tournament → fill form (title, date/time, entry fee, prize, slots)
+
+Choose auto room-code generation and anti-cheat options
+
+Schedule publish / visibility (private/public)
+
+Save → tournament appears in listing and can be edited
+
+At start time admin can manually override room-code or trigger auto-release
+
+Post-match: admin can review flagged results, approve & trigger payouts
+
+Permissions & Security Notes
+
+KYC enforced for withdrawals; show required KYC fields in profile.
+
+Rate-limit sensitive endpoints (join, payment) and use transaction-idempotency.
+
+Encryption for PII and payment tokens.
+
+Impersonation for admin support: log and require reason.
+
+Two-person approval for large manual wallet adjustments (> configurable threshold).
+
+Payment reconciliation: daily automated job to reconcile gateway transactions with internal ledger.
+
+Deliverables you can copy into frontend work
+
+Page route list (above)
+
+For each route: component map (Header, Filters, List/Card, Modal, Table, Footer)
+
+API endpoints (suggested):
+
+GET /api/tournaments?filter...
+
+GET /api/tournaments/:id
+
+POST /api/tournaments/:id/join
+
+GET /api/users/:id
+
+POST /api/admin/tournaments (admin)
+
+POST /api/admin/wallet/adjust (admin)
+
+GET /api/matches/:id/results
+
+POST /api/support/ticket
+
+UI states to implement: loading, empty (no tournaments), error, and success (toasts)
