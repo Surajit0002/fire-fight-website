@@ -37,6 +37,7 @@ import {
   User,
   Upload,
   Copy,
+  Trophy,
 } from "lucide-react";
 
 const createTeamSchema = z.object({

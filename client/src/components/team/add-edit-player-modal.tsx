@@ -25,6 +25,7 @@ import {
   User,
   X,
   UserPlus,
+  Upload,
 } from "lucide-react";
 
 const addPlayerSchema = z.object({
