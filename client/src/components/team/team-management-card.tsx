@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -166,22 +165,26 @@ export default function TeamManagementCard({
     >
       {/* Animated Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
-      
+
       {/* Glow Effect */}
-      <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${getGameTypeGradient(team.gameType || 'bgmi')} blur-xl`} />
+      <div
+        className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${getGameTypeGradient(team.gameType || "bgmi")} blur-xl`}
+      />
 
       <CardContent className="relative p-0">
         {/* Enhanced Header Section */}
-        <div className={`relative px-5 py-5 ${getGameTypeGradient(team.gameType || 'bgmi')}`}>
+        <div
+          className={`relative px-5 py-5 ${getGameTypeGradient(team.gameType || "bgmi")}`}
+        >
           {/* Dynamic Background Patterns */}
           <div className="absolute inset-0 bg-black/25" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-white/10 to-black/20" />
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-          
+
           {/* Floating Elements */}
           <div className="absolute top-2 right-2 w-16 h-16 bg-white/5 rounded-full blur-xl" />
           <div className="absolute bottom-2 left-2 w-12 h-12 bg-white/5 rounded-full blur-lg" />
-          
+
           <div className="relative space-y-4">
             {/* Top Row: Logo + Team Info + Actions */}
             <div className="flex items-center justify-between gap-4">
@@ -202,12 +205,12 @@ export default function TeamManagementCard({
                       <Users className="w-8 h-8 text-white relative z-10" />
                     )}
                   </div>
-                  
+
                   {/* Enhanced Rank Badge */}
                   <div className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg border-2 border-white/50 group-hover:scale-110 transition-transform duration-300">
                     <Star className="w-3 h-3 text-yellow-900" />
                   </div>
-                  
+
                   {/* Status Indicator */}
                   <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg animate-pulse">
                     <div className="w-full h-full bg-green-400 rounded-full animate-ping opacity-75" />
@@ -229,18 +232,17 @@ export default function TeamManagementCard({
                       </Badge>
                     )}
                   </div>
-                  
+
                   {/* Game Type & Level */}
                   <div className="flex items-center gap-2">
                     {team.gameType && (
                       <Badge className="bg-black/50 backdrop-blur-sm text-white border-white/20 text-sm px-3 py-1 font-medium hover:bg-black/60 transition-colors">
-                        <span className="mr-1">{getGameTypeIcon(team.gameType)}</span>
+                        <span className="mr-1">
+                          {getGameTypeIcon(team.gameType)}
+                        </span>
                         {team.gameType}
                       </Badge>
                     )}
-                    <Badge className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 text-white border-0 text-xs px-2 py-1 font-bold">
-                      LVL {Math.floor(stats.matches / 5) + 1}
-                    </Badge>
                   </div>
                 </div>
               </div>
@@ -267,16 +269,28 @@ export default function TeamManagementCard({
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-52 bg-slate-800/95 backdrop-blur-lg border-slate-600 shadow-2xl">
-                      <DropdownMenuItem onClick={() => onEdit(team)} className="text-white hover:bg-slate-700/80">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-52 bg-slate-800/95 backdrop-blur-lg border-slate-600 shadow-2xl"
+                    >
+                      <DropdownMenuItem
+                        onClick={() => onEdit(team)}
+                        className="text-white hover:bg-slate-700/80"
+                      >
                         <Edit className="w-4 h-4 mr-2" />
                         Edit Team
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onAddPlayer(team.id)} className="text-white hover:bg-slate-700/80">
+                      <DropdownMenuItem
+                        onClick={() => onAddPlayer(team.id)}
+                        className="text-white hover:bg-slate-700/80"
+                      >
                         <UserPlus className="w-4 h-4 mr-2" />
                         Add Player
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleCopyTeamCode} className="text-white hover:bg-slate-700/80">
+                      <DropdownMenuItem
+                        onClick={handleCopyTeamCode}
+                        className="text-white hover:bg-slate-700/80"
+                      >
                         <Copy className="w-4 h-4 mr-2" />
                         Copy Join Code
                       </DropdownMenuItem>
@@ -299,12 +313,17 @@ export default function TeamManagementCard({
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-white/80" />
-                  <span className="text-white/80 text-sm font-medium">Team</span>
+                  <span className="text-white/80 text-sm font-medium">
+                    Team
+                  </span>
                 </div>
-                
+
                 <div className="flex items-center gap-1">
                   {members.slice(0, 4).map((member: any, index: number) => (
-                    <Avatar key={member.id} className="w-8 h-8 border-2 border-white/40 shadow-lg hover:scale-110 transition-transform duration-200">
+                    <Avatar
+                      key={member.id}
+                      className="w-8 h-8 border-2 border-white/40 shadow-lg hover:scale-110 transition-transform duration-200"
+                    >
                       <AvatarImage src={member.user?.profileImageUrl} />
                       <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
                         {member.user?.username?.charAt(0).toUpperCase() || "M"}
@@ -313,7 +332,9 @@ export default function TeamManagementCard({
                   ))}
                   {members.length > 4 && (
                     <div className="w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/40 shadow-lg">
-                      <span className="text-xs font-bold text-white">+{members.length - 4}</span>
+                      <span className="text-xs font-bold text-white">
+                        +{members.length - 4}
+                      </span>
                     </div>
                   )}
                   {members.length === 0 && (
@@ -322,7 +343,7 @@ export default function TeamManagementCard({
                     </div>
                   )}
                 </div>
-                
+
                 <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm px-3 py-1 font-bold">
                   {members.length}/{team.maxPlayers}
                 </Badge>
@@ -353,7 +374,9 @@ export default function TeamManagementCard({
               <div className="text-xs text-blue-200 font-medium">Matches</div>
             </div>
             <div className="text-center p-3 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-xl border border-green-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
-              <div className={`text-lg font-bold mb-1 ${getWinRateColor(stats.winRate)}`}>
+              <div
+                className={`text-lg font-bold mb-1 ${getWinRateColor(stats.winRate)}`}
+              >
                 {stats.winRate}%
               </div>
               <div className="text-xs text-green-200 font-medium">Win Rate</div>
@@ -411,7 +434,9 @@ export default function TeamManagementCard({
 
                 {/* Enhanced Hover Card */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover/member:opacity-100 transition-all duration-300 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap z-20 border border-slate-600 shadow-xl">
-                  <div className="font-semibold">{member.user?.username || "Unknown"}</div>
+                  <div className="font-semibold">
+                    {member.user?.username || "Unknown"}
+                  </div>
                   <div className="text-slate-300 capitalize">{member.role}</div>
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
                 </div>
@@ -454,7 +479,8 @@ export default function TeamManagementCard({
             <div className="flex items-center gap-2 text-xs font-medium">
               <Trophy className="w-4 h-4 text-yellow-400" />
               <span className="text-yellow-300">
-                {stats.tournaments} Tournament{stats.tournaments > 1 ? "s" : ""} Won
+                {stats.tournaments} Tournament{stats.tournaments > 1 ? "s" : ""}{" "}
+                Won
               </span>
             </div>
           )}
