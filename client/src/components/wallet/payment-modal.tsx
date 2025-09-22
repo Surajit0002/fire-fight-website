@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loadStripe } from '@stripe/stripe-js';
@@ -13,9 +14,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { CreditCard, Wallet, Shield, CheckCircle } from "lucide-react";
+import { 
+  CreditCard, 
+  Wallet, 
+  Shield, 
+  CheckCircle, 
+  AlertTriangle,
+  Smartphone,
+  QrCode,
+  Timer,
+  Info
+} from "lucide-react";
 
 // Stripe configuration - make it optional
 const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
@@ -100,6 +112,7 @@ export default function PaymentModal({
   const [clientSecret, setClientSecret] = useState("");
   const [step, setStep] = useState<'amount' | 'payment' | 'success'>('amount');
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'upi' | 'demo'>('demo');
 
   // Check if Stripe is available
   const isStripeAvailable = !!stripePromise;
@@ -108,6 +121,15 @@ export default function PaymentModal({
 
   const createPaymentMutation = useMutation({
     mutationFn: async (paymentAmount: number) => {
+      if (paymentMethod === 'demo') {
+        // Simulate payment for demo
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ clientSecret: 'demo_payment_success' });
+          }, 2000);
+        });
+      }
+      
       const response = await apiRequest("POST", "/api/create-payment-intent", {
         amount: paymentAmount,
         description: type === 'deposit' ? "Wallet top-up" : `Tournament entry - ${tournamentId}`,
@@ -115,8 +137,12 @@ export default function PaymentModal({
       return response.json();
     },
     onSuccess: (data) => {
-      setClientSecret(data.clientSecret);
-      setStep('payment');
+      if (paymentMethod === 'demo') {
+        handlePaymentSuccess();
+      } else {
+        setClientSecret(data.clientSecret);
+        setStep('payment');
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -128,14 +154,6 @@ export default function PaymentModal({
   });
 
   const handleProceedToPayment = () => {
-    if (!isStripeAvailable) {
-      toast({
-        title: "Payment Not Available",
-        description: "Payment processing is currently not configured",
-        variant: "destructive",
-      });
-      return;
-    }
     if (amount < 10) {
       toast({
         title: "Invalid Amount",
@@ -167,8 +185,7 @@ export default function PaymentModal({
     // Auto close after 3 seconds
     setTimeout(() => {
       onClose();
-      setStep('amount');
-      setClientSecret("");
+      resetModal();
     }, 3000);
   };
 
@@ -186,6 +203,7 @@ export default function PaymentModal({
     setStep('amount');
     setClientSecret("");
     setAmount(initialAmount || 100);
+    setPaymentMethod('demo');
   };
 
   return (
@@ -195,7 +213,7 @@ export default function PaymentModal({
         resetModal();
       }
     }}>
-      <DialogContent className="max-w-md" data-testid="payment-modal">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" data-testid="payment-modal">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             {type === 'deposit' ? (
@@ -252,6 +270,83 @@ export default function PaymentModal({
               </div>
             </div>
 
+            {/* Payment Method Selection */}
+            <div className="space-y-4">
+              <Label>Payment Method</Label>
+              <Tabs value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as any)}>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="demo" className="flex items-center gap-2">
+                    <QrCode className="w-4 h-4" />
+                    Demo
+                  </TabsTrigger>
+                  <TabsTrigger value="upi" className="flex items-center gap-2">
+                    <Smartphone className="w-4 h-4" />
+                    UPI
+                  </TabsTrigger>
+                  <TabsTrigger value="stripe" className="flex items-center gap-2" disabled={!isStripeAvailable}>
+                    <CreditCard className="w-4 h-4" />
+                    Card
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="demo" className="space-y-3">
+                  <Card className="border-green-200 bg-green-50">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <span className="font-medium text-green-800">Demo Payment</span>
+                      </div>
+                      <p className="text-sm text-green-700">
+                        This is a demo mode. Payment will be simulated for testing purposes.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="upi" className="space-y-3">
+                  <Card className="border-blue-200 bg-blue-50">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Smartphone className="w-4 h-4 text-blue-600" />
+                        <span className="font-medium text-blue-800">UPI Payment</span>
+                      </div>
+                      <p className="text-sm text-blue-700">
+                        Pay using any UPI app like PhonePe, Google Pay, Paytm, or BHIM.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="stripe" className="space-y-3">
+                  {isStripeAvailable ? (
+                    <Card className="border-purple-200 bg-purple-50">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CreditCard className="w-4 h-4 text-purple-600" />
+                          <span className="font-medium text-purple-800">Credit/Debit Card</span>
+                        </div>
+                        <p className="text-sm text-purple-700">
+                          Pay securely using your credit or debit card via Stripe.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card className="border-gray-200 bg-gray-50">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle className="w-4 h-4 text-gray-600" />
+                          <span className="font-medium text-gray-800">Unavailable</span>
+                        </div>
+                        <p className="text-sm text-gray-700">
+                          Card payments are not configured in this environment.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </div>
+
             {/* Payment Summary */}
             <Card className="border-border">
               <CardContent className="p-4">
@@ -263,6 +358,12 @@ export default function PaymentModal({
                   <div className="flex items-center justify-between">
                     <span>Processing Fee</span>
                     <span className="text-green-500">FREE</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Payment Method</span>
+                    <Badge variant="outline">
+                      {paymentMethod === 'demo' ? 'Demo' : paymentMethod === 'upi' ? 'UPI' : 'Card'}
+                    </Badge>
                   </div>
                   <div className="border-t border-border pt-3">
                     <div className="flex items-center justify-between font-semibold">
@@ -278,11 +379,9 @@ export default function PaymentModal({
             <div className="bg-muted/30 rounded-lg p-4 flex items-center gap-3">
               <Shield className="w-5 h-5 text-green-500" />
               <div className="text-sm">
-                <div className="font-medium">
-                  {isStripeAvailable ? "100% Secure Payment" : "Payment Unavailable"}
-                </div>
+                <div className="font-medium">100% Secure Payment</div>
                 <div className="text-muted-foreground">
-                  {isStripeAvailable ? "Protected by Stripe encryption" : "Payment processing not configured"}
+                  Your payment information is encrypted and secure
                 </div>
               </div>
             </div>
@@ -291,16 +390,22 @@ export default function PaymentModal({
             <Button 
               className="w-full gradient-fire text-black font-bold hover:scale-105 transition-transform"
               onClick={handleProceedToPayment}
-              disabled={!isStripeAvailable || amount < 10 || amount > 50000 || createPaymentMutation.isPending}
+              disabled={amount < 10 || amount > 50000 || createPaymentMutation.isPending}
               data-testid="proceed-to-payment"
             >
-              {!isStripeAvailable ? "Payment Not Available" :
-               createPaymentMutation.isPending ? "Preparing..." : "Proceed to Payment"}
+              {createPaymentMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <Timer className="w-4 h-4 animate-spin" />
+                  {paymentMethod === 'demo' ? 'Simulating Payment...' : 'Preparing Payment...'}
+                </div>
+              ) : (
+                `Proceed with ${paymentMethod === 'demo' ? 'Demo' : paymentMethod === 'upi' ? 'UPI' : 'Card'} Payment`
+              )}
             </Button>
           </div>
         )}
 
-        {step === 'payment' && clientSecret && stripePromise && (
+        {step === 'payment' && clientSecret && stripePromise && paymentMethod === 'stripe' && (
           <div className="space-y-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-gradient mb-2">₹{amount.toLocaleString('en-IN')}</div>
@@ -345,7 +450,8 @@ export default function PaymentModal({
               Transaction Completed
             </Badge>
 
-            <div className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Timer className="w-4 h-4" />
               This window will close automatically...
             </div>
           </div>
