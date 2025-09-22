@@ -7,13 +7,13 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertTournamentSchema, insertTeamSchema, insertSupportTicketSchema, insertMatchReportSchema } from "@shared/schema";
 import { z } from "zod";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+// Make Stripe optional
+let stripe: Stripe | null = null;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2023-10-16",
+  });
 }
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
 
 // WebSocket clients map
 const wsClients = new Map<string, WebSocket>();
@@ -137,6 +137,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create payment intent for entry fee
       let paymentIntentId = null;
       if (parseFloat(tournament.entryFee) > 0) {
+        if (!stripe) {
+          return res.status(503).json({ message: "Payment processing is not available" });
+        }
         const paymentIntent = await stripe.paymentIntents.create({
           amount: Math.round(parseFloat(tournament.entryFee) * 100),
           currency: "inr",
@@ -159,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         participant, 
-        clientSecret: paymentIntentId ? (await stripe.paymentIntents.retrieve(paymentIntentId)).client_secret : null 
+        clientSecret: paymentIntentId && stripe ? (await stripe.paymentIntents.retrieve(paymentIntentId)).client_secret : null 
       });
     } catch (error) {
       console.error("Error joining tournament:", error);
@@ -299,6 +302,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Payment routes
   app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
     try {
+      if (!stripe) {
+        return res.status(503).json({ message: "Payment processing is not available" });
+      }
+
       const { amount, description } = req.body;
       const userId = req.user.claims.sub;
       
