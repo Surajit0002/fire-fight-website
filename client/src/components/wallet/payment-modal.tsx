@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { CreditCard, Wallet, Shield, CheckCircle } from "lucide-react";
 
-// Make Stripe optional
+// Stripe configuration - make it optional
 const stripePromise = import.meta.env.VITE_STRIPE_PUBLIC_KEY 
   ? loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
   : null;
@@ -30,23 +30,31 @@ interface PaymentModalProps {
   tournamentId?: string;
 }
 
-function PaymentForm({ amount, onSuccess, onError }: { 
+function PaymentForm({ amount, onSuccess, onError, loading, setLoading }: { 
   amount: number; 
   onSuccess: () => void; 
   onError: (error: string) => void; 
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !stripePromise) {
+      setLoading(false);
+      toast({
+        title: "Error", 
+        description: "Payment processing is not available",
+        variant: "destructive"
+      });
       return;
     }
 
-    setIsProcessing(true);
+    setLoading(true);
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -55,7 +63,7 @@ function PaymentForm({ amount, onSuccess, onError }: {
       },
     });
 
-    setIsProcessing(false);
+    setLoading(false);
 
     if (error) {
       onError(error.message || "Payment failed");
@@ -70,10 +78,10 @@ function PaymentForm({ amount, onSuccess, onError }: {
       <Button 
         type="submit" 
         className="w-full gradient-fire text-black font-bold"
-        disabled={!stripe || isProcessing}
+        disabled={!stripe || loading}
         data-testid="confirm-payment"
       >
-        {isProcessing ? "Processing..." : `Pay ₹${amount.toLocaleString('en-IN')}`}
+        {loading ? "Processing..." : `Pay ₹${amount.toLocaleString('en-IN')}`}
       </Button>
     </form>
   );
@@ -91,6 +99,7 @@ export default function PaymentModal({
   const [amount, setAmount] = useState(initialAmount || 100);
   const [clientSecret, setClientSecret] = useState("");
   const [step, setStep] = useState<'amount' | 'payment' | 'success'>('amount');
+  const [loading, setLoading] = useState(false);
 
   // Check if Stripe is available
   const isStripeAvailable = !!stripePromise;
@@ -303,6 +312,8 @@ export default function PaymentModal({
                 amount={amount}
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
+                loading={loading}
+                setLoading={setLoading}
               />
             </Elements>
 
