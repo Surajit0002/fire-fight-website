@@ -19,9 +19,10 @@ interface TournamentCardProps {
     status: string;
     imageUrl?: string | null;
   };
+  variant?: 'default' | 'wide' | 'compact' | 'large';
 }
 
-export default function TournamentCard({ tournament }: TournamentCardProps) {
+export default function TournamentCard({ tournament, variant = 'default' }: TournamentCardProps) {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'live':
@@ -86,17 +87,200 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
   const rank2Prize = Math.floor(totalPrize * 0.3);
   const rank3Prize = Math.floor(totalPrize * 0.2);
 
+  // Get variant-specific classes
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'wide':
+        return {
+          container: 'max-w-2xl w-full',
+          layout: 'md:flex-row',
+          imageHeight: 'md:h-full md:w-48',
+          content: 'flex-1'
+        };
+      case 'compact':
+        return {
+          container: 'max-w-sm w-full',
+          layout: 'flex-col',
+          imageHeight: 'h-24',
+          content: 'flex-1'
+        };
+      case 'large':
+        return {
+          container: 'max-w-3xl w-full',
+          layout: 'md:flex-row',
+          imageHeight: 'md:h-full md:w-64',
+          content: 'flex-1'
+        };
+      default:
+        return {
+          container: 'max-w-md w-full',
+          layout: 'flex-col',
+          imageHeight: 'h-32',
+          content: 'flex-1'
+        };
+    }
+  };
+
+  const variantClasses = getVariantClasses();
+
+  if (variant === 'wide' || variant === 'large') {
+    return (
+      <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl ${variantClasses.container}`}>
+        <div className={`flex ${variantClasses.layout} h-full`}>
+          {/* Game Background Header */}
+          <div 
+            className={`relative ${variantClasses.imageHeight} overflow-hidden rounded-l-2xl md:rounded-l-2xl md:rounded-tr-none`}
+            style={{ background: gameBackground }}
+          >
+            {/* Game Characters/Background Image */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-white font-black text-2xl md:text-4xl opacity-20 transform rotate-12">
+                  {tournament.game.toUpperCase()}
+                </div>
+              </div>
+            </div>
+
+            {/* Live Status Badge */}
+            <div className="absolute top-3 left-3">
+              <Badge className={`${statusConfig.color} text-white text-xs font-bold px-3 py-1 rounded-full border-0`}>
+                {statusConfig.dot && (
+                  <span className="w-2 h-2 bg-white rounded-full animate-pulse mr-2"></span>
+                )}
+                {statusConfig.text}
+              </Badge>
+            </div>
+
+            {/* Game Title */}
+            <div className="absolute bottom-3 left-3">
+              <h3 className="text-white font-black text-sm md:text-lg drop-shadow-lg">
+                {tournament.game.toUpperCase()}
+              </h3>
+            </div>
+          </div>
+
+          {/* Content Section */}
+          <div className={`${variantClasses.content} p-4 space-y-3`}>
+            {/* Tournament Title and Details */}
+            <div>
+              <h4 className="font-bold text-lg text-white mb-1 line-clamp-1">
+                🔥 {tournament.title}
+              </h4>
+              <div className="flex items-center gap-3 text-sm text-gray-300 flex-wrap">
+                <span className="flex items-center gap-1">
+                  <Gamepad2 className="w-4 h-4" />
+                  {tournament.game}
+                </span>
+                <span>⚔️ {tournament.gameMode || 'Squad'}</span>
+                <span>📱 Mobile</span>
+              </div>
+            </div>
+
+            {/* Prize Pool and Info in horizontal layout */}
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <div className="text-xl md:text-2xl font-black text-green-400 mb-1">
+                  {formatCurrency(tournament.prizePool)}
+                </div>
+                <div className="text-xs text-gray-400">Prize Pool</div>
+              </div>
+
+              {/* Tournament Info Pills */}
+              <div className="flex gap-2 flex-wrap">
+                <div className="bg-white/10 px-2 py-1 rounded-full text-xs text-white">
+                  Team Size (4v4)
+                </div>
+                <div className="bg-white/10 px-2 py-1 rounded-full text-xs text-white">
+                  Knockout
+                </div>
+              </div>
+            </div>
+
+            {/* Prize Distribution */}
+            <div className="flex justify-between items-center py-2">
+              <div className="text-center">
+                <div className="text-sm md:text-lg font-bold text-red-400">
+                  {formatCurrency(rank1Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 1</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm md:text-lg font-bold text-red-400">
+                  {formatCurrency(rank2Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 2</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm md:text-lg font-bold text-red-400">
+                  {formatCurrency(rank3Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 3</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-bold text-green-400">+2 per kill</div>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="w-full bg-gray-700 rounded-full h-1.5">
+                <div 
+                  className="bg-red-500 h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${fillPercentage}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>{participants} joined</span>
+                <span>{slotsLeft} slots left</span>
+              </div>
+            </div>
+
+            {/* Action Buttons and Start Time */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex gap-2 flex-1">
+                <Link href={`/tournaments/${tournament.id}`} className="flex-1">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 transition-all duration-200"
+                    size="sm"
+                  >
+                    💳 join ₹{parseFloat(tournament.entryFee) === 0 ? '0' : parseFloat(tournament.entryFee)}
+                  </Button>
+                </Link>
+                <Link href={`/tournaments/${tournament.id}`}>
+                  <Button 
+                    variant="outline" 
+                    className="bg-orange-500 hover:bg-orange-600 text-white border-orange-500 font-bold rounded-lg px-4 py-2 transition-all duration-200"
+                    size="sm"
+                  >
+                    view more
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Start Time */}
+              <div className="text-xs text-gray-400 whitespace-nowrap">
+                <Clock className="w-3 h-3 inline mr-1" />
+                Starts in: {formatDateTime(tournament.startTime)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Default vertical layout for default and compact variants
   return (
-    <Card className="relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl">
+    <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl ${variantClasses.container}`}>
       {/* Game Background Header */}
       <div 
-        className="relative h-32 overflow-hidden rounded-t-2xl"
+        className={`relative ${variantClasses.imageHeight} overflow-hidden rounded-t-2xl`}
         style={{ background: gameBackground }}
       >
         {/* Game Characters/Background Image */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-white font-black text-4xl opacity-20 transform rotate-12">
+            <div className="text-white font-black text-2xl md:text-4xl opacity-20 transform rotate-12">
               {tournament.game.toUpperCase()}
             </div>
           </div>
@@ -145,44 +329,48 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
           <div className="text-xs text-gray-400">Prize Pool</div>
         </div>
 
-        {/* Tournament Info Pills */}
-        <div className="flex justify-center gap-2">
-          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
-            Team Size (4v4)
-          </div>
-          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
-            Format: Knockout
-          </div>
-          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
-            <Trophy className="w-3 h-3" />
-            Winner Prizes
-          </div>
-        </div>
+        {variant !== 'compact' && (
+          <>
+            {/* Tournament Info Pills */}
+            <div className="flex justify-center gap-2">
+              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+                Team Size (4v4)
+              </div>
+              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+                Format: Knockout
+              </div>
+              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+                <Trophy className="w-3 h-3" />
+                Winner Prizes
+              </div>
+            </div>
 
-        {/* Prize Distribution */}
-        <div className="flex justify-between items-center py-2">
-          <div className="text-center">
-            <div className="text-lg font-bold text-red-400">
-              {formatCurrency(rank1Prize.toString())}
+            {/* Prize Distribution */}
+            <div className="flex justify-between items-center py-2">
+              <div className="text-center">
+                <div className="text-lg font-bold text-red-400">
+                  {formatCurrency(rank1Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 1</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-red-400">
+                  {formatCurrency(rank2Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 2</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-red-400">
+                  {formatCurrency(rank3Prize.toString())}
+                </div>
+                <div className="text-xs text-gray-400">Rank 3</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-bold text-green-400">+2 per kill</div>
+              </div>
             </div>
-            <div className="text-xs text-gray-400">Rank 1</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-red-400">
-              {formatCurrency(rank2Prize.toString())}
-            </div>
-            <div className="text-xs text-gray-400">Rank 2</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-red-400">
-              {formatCurrency(rank3Prize.toString())}
-            </div>
-            <div className="text-xs text-gray-400">Rank 3</div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm font-bold text-green-400">+2 per kill</div>
-          </div>
-        </div>
+          </>
+        )}
 
         {/* Progress Bar */}
         <div className="space-y-2">
