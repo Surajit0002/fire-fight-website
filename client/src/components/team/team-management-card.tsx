@@ -226,11 +226,6 @@ export default function TeamManagementCard({
                     >
                       {team.name}
                     </h3>
-                    {team.tag && (
-                      <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-xs px-2 py-1 font-bold uppercase tracking-wider">
-                        {team.tag}
-                      </Badge>
-                    )}
                   </div>
 
                   {/* Game Type & Level */}
@@ -308,21 +303,14 @@ export default function TeamManagementCard({
             </div>
 
             {/* Bottom Row: Enhanced Members & Join Code */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-3 w-full">
               {/* Enhanced Members Display */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-white/80" />
-                  <span className="text-white/80 text-sm font-medium">
-                    Team
-                  </span>
-                </div>
-
+              <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   {members.slice(0, 4).map((member: any, index: number) => (
                     <Avatar
                       key={member.id}
-                      className="w-8 h-8 border-2 border-white/40 shadow-lg hover:scale-110 transition-transform duration-200"
+                      className="w-7 h-7 border-2 border-white/40 shadow-md hover:scale-110 transition-transform duration-200"
                     >
                       <AvatarImage src={member.user?.profileImageUrl} />
                       <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs font-bold">
@@ -331,41 +319,39 @@ export default function TeamManagementCard({
                     </Avatar>
                   ))}
                   {members.length > 4 && (
-                    <div className="w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/40 shadow-lg">
+                    <div className="w-7 h-7 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/40 shadow-md">
                       <span className="text-xs font-bold text-white">
                         +{members.length - 4}
                       </span>
                     </div>
                   )}
                   {members.length === 0 && (
-                    <div className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border-2 border-white/40 shadow-lg">
-                      <Users className="w-4 h-4 text-white/60" />
+                    <div className="w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border-2 border-white/40 shadow-md">
+                      <Users className="w-3 h-3 text-white/60" />
                     </div>
                   )}
                 </div>
 
-                <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-sm px-3 py-1 font-bold">
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 text-xs px-2 py-0.5 font-bold">
                   {members.length}/{team.maxPlayers}
                 </Badge>
               </div>
-
               {/* Enhanced Join Code */}
-              <div className="bg-black/40 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/30 shadow-xl group-hover:bg-black/50 transition-colors duration-300">
-                <div className="text-center">
-                  <div className="text-xs text-white/70 font-semibold uppercase tracking-widest mb-1">
-                    Join Code
-                  </div>
-                  <div className="text-lg font-black text-white tracking-wider font-mono">
-                    {team.teamCode || "DEMO123"}
-                  </div>
-                </div>
-              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleCopyTeamCode}
+                className="h-6 px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 text-white text-xs font-medium"
+              >
+                <Copy className="w-3 h-3 mr-1" />
+                Copy Code
+              </Button>
             </div>
           </div>
         </div>
-
+        
         {/* Enhanced Stats Section */}
-        <div className="px-6 py-5 bg-slate-800/50 backdrop-blur-sm">
+        <div className="px-2 py-2 bg-slate-800/50 backdrop-blur-sm">
           <div className="grid grid-cols-4 gap-3">
             <div className="text-center p-3 bg-gradient-to-br from-blue-500/20 to-blue-600/30 rounded-xl border border-blue-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div className="text-lg font-bold text-blue-300 mb-1">
@@ -373,7 +359,7 @@ export default function TeamManagementCard({
               </div>
               <div className="text-xs text-blue-200 font-medium">Matches</div>
             </div>
-            <div className="text-center p-3 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-xl border border-green-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+            <div className="text-center p-2 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-xl border border-green-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div
                 className={`text-lg font-bold mb-1 ${getWinRateColor(stats.winRate)}`}
               >
@@ -387,7 +373,7 @@ export default function TeamManagementCard({
               </div>
               <div className="text-xs text-red-200 font-medium">Kills</div>
             </div>
-            <div className="text-center p-3 bg-gradient-to-br from-yellow-500/20 to-yellow-600/30 rounded-xl border border-yellow-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+            <div className="text-center p-2 bg-gradient-to-br from-yellow-500/20 to-yellow-600/30 rounded-xl border border-yellow-400/20 backdrop-blur-sm hover:scale-105 transition-transform duration-300">
               <div className="text-lg font-bold text-yellow-300 mb-1">
                 {stats.tournaments}
               </div>
