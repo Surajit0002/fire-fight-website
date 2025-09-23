@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import Stripe from "stripe";
+import multer from "multer";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertTournamentSchema, insertTeamSchema, insertSupportTicketSchema, insertMatchReportSchema } from "@shared/schema";
@@ -17,6 +18,21 @@ if (process.env.STRIPE_SECRET_KEY) {
 } else {
   console.warn("Stripe not configured - payment features will be disabled");
 }
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
 
 // WebSocket clients map
 const wsClients = new Map<string, WebSocket>();
