@@ -233,28 +233,26 @@ export default function CreateEditTeamModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="max-w-2xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl"
+        className="max-w-lg max-h-[90vh] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl"
         data-testid="create-edit-team-modal"
       >
         {/* Enhanced Header */}
         <DialogHeader
-          className={`px-6 py-6 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} text-white -mx-6 -mt-6 mb-0 relative overflow-hidden`}
+          className={`px-4 py-4 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} text-white -mx-6 -mt-6 mb-0 relative overflow-hidden`}
         >
           {/* Background Effects */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10" />
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-20 translate-x-20" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12" />
 
           <div className="flex items-center justify-between relative z-10">
-            <DialogTitle className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                <Users className="w-6 h-6 text-white" />
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                <Users className="w-5 h-5 text-white" />
               </div>
               <div>
-                <div className="text-2xl font-bold">
+                <div className="text-xl font-bold">
                   {isEditing ? "Edit Team" : "Create Team"}
                 </div>
-                <div className="text-sm text-white/80 font-normal">
+                <div className="text-xs text-white/80 font-normal">
                   {isEditing
                     ? "Update your team information"
                     : "Build your esports squad"}
@@ -264,20 +262,20 @@ export default function CreateEditTeamModal({
           </div>
         </DialogHeader>
 
-        <div className="px-2 py-2 space-y-4 ">
+        <div className="px-4 py-3 space-y-3">
           {/* Team Setup Section */}
-          <div className="bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
-            <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
-              <Star className="w-5 h-5 text-blue-500" />
+          <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+            <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <Star className="w-4 h-4 text-blue-500" />
               Team Information
             </h3>
 
-            <div className="flex gap-6">
-              {/* Team Logo */}
-              <div className="flex-shrink-0">
+            <div className="space-y-4">
+              {/* Team Logo - Centered */}
+              <div className="flex justify-center">
                 <div className="relative group">
                   <div
-                    className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedGame?.color || "from-blue-500 to-purple-600"} border-4 border-white shadow-xl flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}
+                    className={`w-20 h-20 rounded-xl bg-gradient-to-br ${selectedGame?.color || "from-blue-500 to-purple-600"} border-2 border-white shadow-lg flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}
                   >
                     {logoPreview ? (
                       <img
@@ -287,7 +285,7 @@ export default function CreateEditTeamModal({
                       />
                     ) : (
                       <div className="text-center">
-                        <Camera className="w-8 h-8 text-white mb-1" />
+                        <Camera className="w-6 h-6 text-white mb-1" />
                         <span className="text-xs font-medium text-white">
                           Logo
                         </span>
@@ -302,40 +300,40 @@ export default function CreateEditTeamModal({
                     />
                   </div>
                   {/* Upload Indicator */}
-                  <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
                     <Camera className="w-3 h-3 text-white" />
                   </div>
                 </div>
               </div>
 
               {/* Team Details Form */}
-              <div className="flex-1 space-y-4">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-3">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
                   {/* Team Name */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                      <Hash className="w-4 h-4 text-gray-500" />
+                  <div className="space-y-1">
+                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                      <Hash className="w-3 h-3 text-gray-500" />
                       Team Name
                     </label>
                     <Input
                       placeholder="Enter your team name"
-                      className="h-12 bg-gray-50 border-2 border-gray-200 focus:border-blue-400 focus:bg-white rounded-xl text-base"
+                      className="h-10 bg-gray-50 border border-gray-200 focus:border-blue-400 focus:bg-white rounded-lg text-sm"
                       {...register("name")}
                       data-testid="team-name-input"
                     />
                     {errors.name && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
+                      <p className="text-xs text-red-500 flex items-center gap-1">
                         <X className="w-3 h-3" />
                         {errors.name.message}
                       </p>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {/* Game Type */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <Gamepad2 className="w-4 h-4 text-gray-500" />
+                    <div className="space-y-1">
+                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                        <Gamepad2 className="w-3 h-3 text-gray-500" />
                         Game Type
                       </label>
                       <Select
@@ -343,21 +341,21 @@ export default function CreateEditTeamModal({
                         onValueChange={(value) => setValue("gameType", value)}
                       >
                         <SelectTrigger
-                          className="h-12 bg-gray-50 border-2 border-gray-200 focus:border-blue-400 rounded-xl"
+                          className="h-10 bg-gray-50 border border-gray-200 focus:border-blue-400 rounded-lg text-sm"
                           data-testid="game-type-select"
                         >
                           <SelectValue placeholder="Select game" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border-2 shadow-xl">
+                        <SelectContent className="rounded-lg border shadow-xl">
                           {gameTypes.map((game) => (
                             <SelectItem
                               key={game.value}
                               value={game.value}
-                              className="rounded-lg"
+                              className="rounded-md"
                             >
-                              <div className="flex items-center gap-3">
-                                <span className="text-lg">{game.icon}</span>
-                                <span className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <span className="text-base">{game.icon}</span>
+                                <span className="font-medium text-sm">
                                   {game.label}
                                 </span>
                               </div>
@@ -368,9 +366,9 @@ export default function CreateEditTeamModal({
                     </div>
 
                     {/* Max Players */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <Users className="w-4 h-4 text-gray-500" />
+                    <div className="space-y-1">
+                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                        <Users className="w-3 h-3 text-gray-500" />
                         Team Size
                       </label>
                       <Select
@@ -379,15 +377,15 @@ export default function CreateEditTeamModal({
                           setValue("maxPlayers", parseInt(value))
                         }
                       >
-                        <SelectTrigger className="h-12 bg-gray-50 border-2 border-gray-200 focus:border-blue-400 rounded-xl">
+                        <SelectTrigger className="h-10 bg-gray-50 border border-gray-200 focus:border-blue-400 rounded-lg text-sm">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border-2 shadow-xl">
+                        <SelectContent className="rounded-lg border shadow-xl">
                           {[2, 3, 4, 5, 6].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
                               <div className="flex items-center gap-2">
-                                <Users className="w-4 h-4" />
-                                {num} Players
+                                <Users className="w-3 h-3" />
+                                <span className="text-sm">{num} Players</span>
                               </div>
                             </SelectItem>
                           ))}
@@ -401,129 +399,122 @@ export default function CreateEditTeamModal({
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Button
               type="button"
               onClick={() => onAddPlayer(team?.id || "new")}
-              className="h-14 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="h-10 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-sm"
             >
-              <UserPlus className="w-5 h-5 mr-2" />
+              <UserPlus className="w-4 h-4 mr-1" />
               Add Player
             </Button>
             <Button
               type="button"
-              className="h-14 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="h-10 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-sm"
             >
-              <Send className="w-5 h-5 mr-2" />
+              <Send className="w-4 h-4 mr-1" />
               Invite Player
             </Button>
           </div>
 
-          {/* Enhanced Team Members Preview - 2x3 Grid */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-500" />
+          {/* Enhanced Team Members Preview - Compact Grid */}
+          <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-500" />
                 Team Members
               </h3>
               <Badge
                 variant="outline"
-                className="bg-blue-50 text-blue-700 border-blue-300 px-3 py-1"
+                className="bg-blue-50 text-blue-700 border-blue-300 px-2 py-0.5 text-xs"
               >
                 {teamMembers.length}/{watch("maxPlayers") || 4}
               </Badge>
             </div>
 
             {teamMembers.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="space-y-2">
                 {/* Current Team Members */}
-                {teamMembers.slice(0, 6).map((member: any, index: number) => (
+                {teamMembers.slice(0, 3).map((member: any, index: number) => (
                   <div
                     key={member.id}
-                    className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-all duration-300 hover:scale-102"
+                    className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-2 border border-gray-200 hover:shadow-sm transition-all duration-300"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <div className="relative">
-                        <Avatar className="w-12 h-12 border-2 border-white shadow-lg">
+                        <Avatar className="w-8 h-8 border border-white shadow-sm">
                           <AvatarImage src={member.user?.profileImageUrl} />
-                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-sm">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-xs">
                             {member.user?.username?.charAt(0).toUpperCase() ||
                               "M"}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200">
+                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-200">
                           {getRoleIcon(member.role)}
                         </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-800 truncate mb-1">
+                        <div className="font-medium text-gray-800 truncate text-sm">
                           {member.user?.username || "Player"}
                         </div>
-                        <Badge
-                          variant="outline"
-                          className={`text-xs px-2 py-0.5 ${getRoleBadgeColor(member.role)}`}
-                        >
-                          {member.role?.charAt(0).toUpperCase() +
-                            member.role?.slice(1)}
-                        </Badge>
-                        <div className="text-xs text-gray-500 mt-1 truncate">
-                          ID: {member.user?.gameId || "123456"}
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className={`text-xs px-1.5 py-0 ${getRoleBadgeColor(member.role)}`}
+                          >
+                            {member.role?.charAt(0).toUpperCase() +
+                              member.role?.slice(1)}
+                          </Badge>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
 
-                {/* Empty Slots */}
-                {Array.from({
-                  length: Math.min(
-                    6 - teamMembers.length,
-                    (watch("maxPlayers") || 4) - teamMembers.length,
-                  ),
-                }).map((_, index) => (
+                {/* Add more members button if slots available */}
+                {teamMembers.length < (watch("maxPlayers") || 4) && (
                   <div
-                    key={`empty-${index}`}
                     onClick={() => onAddPlayer(team?.id || "new")}
-                    className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group flex items-center justify-center min-h-[80px]"
+                    className="border border-dashed border-gray-300 rounded-lg p-2 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 cursor-pointer group flex items-center justify-center min-h-[48px]"
                   >
-                    <div className="text-center">
-                      <div className="w-12 h-12 mx-auto bg-gray-200 group-hover:bg-blue-200 rounded-full flex items-center justify-center mb-2 transition-colors">
-                        <UserPlus className="w-6 h-6 text-gray-400 group-hover:text-blue-500" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gray-200 group-hover:bg-blue-200 rounded-full flex items-center justify-center transition-colors">
+                        <UserPlus className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
                       </div>
                       <p className="text-xs text-gray-500 group-hover:text-blue-600 font-medium">
                         Add Player
                       </p>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-10 h-10 text-blue-500" />
+              <div className="text-center py-6">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-3">
+                  <Users className="w-8 h-8 text-blue-500" />
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">
+                <h4 className="font-medium text-gray-800 mb-1 text-sm">
                   No members yet
                 </h4>
-                <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-                  Start building your team by adding players to your squad
+                <p className="text-gray-500 text-xs mb-3 max-w-xs mx-auto">
+                  Start building your team by adding players
                 </p>
                 <Button
                   onClick={() => onAddPlayer(team?.id || "new")}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg h-8 text-xs"
                 >
-                  <UserPlus className="w-4 h-4 mr-2" />
+                  <UserPlus className="w-3 h-3 mr-1" />
                   Add First Player
                 </Button>
               </div>
             )}
 
-            {/* Show more indicator if there are more than 6 members */}
-            {teamMembers.length > 6 && (
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 text-center border border-blue-200">
-                <p className="text-sm text-blue-700 font-medium">
-                  +{teamMembers.length - 6} more members
+            {/* Show more indicator if there are more than 3 members */}
+            {teamMembers.length > 3 && (
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-2 text-center border border-blue-200">
+                <p className="text-xs text-blue-700 font-medium">
+                  +{teamMembers.length - 3} more members
                 </p>
               </div>
             )}
@@ -531,25 +522,25 @@ export default function CreateEditTeamModal({
         </div>
 
         {/* Enhanced Footer */}
-        <DialogFooter className="px-6 py-5 bg-gray-50 border-t border-gray-200 -mx-6 -mb-6 mt-0">
-          <div className="flex gap-4 w-full">
+        <DialogFooter className="px-4 py-3 bg-gray-50 border-t border-gray-200 -mx-6 -mb-6 mt-0">
+          <div className="flex gap-3 w-full">
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 h-12 font-semibold border-2 border-gray-300 hover:bg-gray-100 rounded-xl"
+              className="flex-1 h-10 font-medium border border-gray-300 hover:bg-gray-100 rounded-lg text-sm"
               data-testid="cancel-create-team"
             >
               Cancel
             </Button>
             <Button
-              className={`flex-1 h-12 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} hover:opacity-90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}
+              className={`flex-1 h-10 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} hover:opacity-90 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-sm`}
               onClick={handleSubmit(onSubmit)}
               disabled={createTeamMutation.isPending}
               data-testid="create-team-submit"
             >
               {createTeamMutation.isPending ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   {isEditing ? "Saving..." : "Creating..."}
                 </div>
               ) : isEditing ? (
