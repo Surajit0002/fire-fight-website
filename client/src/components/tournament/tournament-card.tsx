@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -130,11 +129,34 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
     }
   };
 
+  // Define card border and glow colors based on variant
+  const getCardColors = () => {
+    switch (variant) {
+      case 'wide':
+      case 'large':
+        return {
+          cardBorderColor: 'border-yellow-500/30 hover:border-yellow-400',
+          cardGlow: 'shadow-yellow-500/20 hover:shadow-yellow-500/30'
+        };
+      case 'compact':
+        return {
+          cardBorderColor: 'border-purple-500/30 hover:border-purple-400',
+          cardGlow: 'shadow-purple-500/20 hover:shadow-purple-500/30'
+        };
+      default: // default
+        return {
+          cardBorderColor: 'border-green-500/30 hover:border-green-400',
+          cardGlow: 'shadow-green-500/20 hover:shadow-green-500/30'
+        };
+    }
+  };
+
+  const { cardBorderColor, cardGlow } = getCardColors();
   const variantClasses = getVariantClasses();
 
   if (variant === 'wide' || variant === 'large') {
     return (
-      <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl ${variantClasses.container}`}>
+      <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm ${cardBorderColor} transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${cardGlow} rounded-2xl ${variantClasses.container}`}>
         <div className={`flex ${variantClasses.layout} h-full`}>
           {/* Game Background Header */}
           <div 
@@ -195,18 +217,18 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
               </div>
 
               {/* Tournament Info Pills */}
-              <div className="flex gap-2 flex-wrap">
-                <div className="bg-blue-500/20 border border-blue-500/30 px-3 py-1.5 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
+              <div className="flex gap-2 justify-center">
+                <div className="bg-blue-500/20 border border-blue-500/30 px-2 py-1 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
                   <Users className="w-3 h-3" />
                   Team Size (4v4)
                 </div>
-                <div className="bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
+                <div className="bg-orange-500/20 border border-orange-500/30 px-2 py-1 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
                   <Target className="w-3 h-3" />
                   Format: Knockout
                 </div>
                 <Dialog open={isPrizeModalOpen} onOpenChange={setIsPrizeModalOpen}>
                   <DialogTrigger asChild>
-                    <div className="bg-green-500/20 border border-green-500/30 px-3 py-1.5 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
+                    <div className="bg-green-500/20 border border-green-500/30 px-2 py-1 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
                       <Trophy className="w-3 h-3" />
                       Winner Prizes
                       <ChevronDown className="w-3 h-3" />
@@ -231,7 +253,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                           {formatCurrency(rank1Prize.toString())}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-lg border border-gray-400/20">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-black font-bold text-sm">
@@ -243,7 +265,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                           {formatCurrency(rank2Prize.toString())}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-600/10 to-orange-700/10 rounded-lg border border-orange-600/20">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -255,7 +277,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                           {formatCurrency(rank3Prize.toString())}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-lg border border-green-500/20">
                         <div className="flex items-center gap-3">
                           <Zap className="w-6 h-6 text-green-400" />
@@ -263,7 +285,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                         </div>
                         <span className="text-green-400 font-bold text-lg">₹2</span>
                       </div>
-                      
+
                       <div className="border-t border-gray-700 pt-4">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-300 font-medium">Total Prize Pool</span>
@@ -353,7 +375,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
 
   // Default vertical layout for default and compact variants
   return (
-    <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl ${variantClasses.container}`}>
+    <Card className={`relative overflow-hidden bg-white/5 backdrop-blur-sm ${cardBorderColor} transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${cardGlow} rounded-2xl ${variantClasses.container}`}>
       {/* Game Background Header */}
       <div 
         className={`relative ${variantClasses.imageHeight} overflow-hidden rounded-t-2xl`}
@@ -414,18 +436,18 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
         {variant !== 'compact' && (
           <>
             {/* Tournament Info Pills */}
-            <div className="flex justify-center gap-2 flex-wrap">
-              <div className="bg-blue-500/20 border border-blue-500/30 px-3 py-1.5 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
+            <div className="flex gap-2 justify-center">
+              <div className="bg-blue-500/20 border border-blue-500/30 px-2 py-1 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
                 <Users className="w-3 h-3" />
                 Team Size (4v4)
               </div>
-              <div className="bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
+              <div className="bg-orange-500/20 border border-orange-500/30 px-2 py-1 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
                 <Target className="w-3 h-3" />
                 Format: Knockout
               </div>
               <Dialog open={isPrizeModalOpen} onOpenChange={setIsPrizeModalOpen}>
                 <DialogTrigger asChild>
-                  <div className="bg-green-500/20 border border-green-500/30 px-3 py-1.5 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
+                  <div className="bg-green-500/20 border border-green-500/30 px-2 py-1 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
                     <Trophy className="w-3 h-3" />
                     Winner Prizes
                     <ChevronDown className="w-3 h-3" />
@@ -450,7 +472,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                         {formatCurrency(rank1Prize.toString())}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-lg border border-gray-400/20">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-black font-bold text-sm">
@@ -462,7 +484,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                         {formatCurrency(rank2Prize.toString())}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-600/10 to-orange-700/10 rounded-lg border border-orange-600/20">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -474,7 +496,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                         {formatCurrency(rank3Prize.toString())}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-lg border border-green-500/20">
                       <div className="flex items-center gap-3">
                         <Zap className="w-6 h-6 text-green-400" />
@@ -482,7 +504,7 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
                       </div>
                       <span className="text-green-400 font-bold text-lg">₹2</span>
                     </div>
-                    
+
                     <div className="border-t border-gray-700 pt-4">
                       <div className="flex items-center justify-between">
                         <span className="text-gray-300 font-medium">Total Prize Pool</span>
