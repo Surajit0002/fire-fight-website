@@ -521,34 +521,103 @@ export default function CreateEditTeamModal({
           </div>
         </div>
 
-        {/* Enhanced Footer */}
-        <DialogFooter className="px-4 py-3 bg-gray-50 border-t border-gray-200 -mx-6 -mb-6 mt-0">
-          <div className="flex gap-3 w-full">
+        {/* Advanced Dynamic Footer */}
+        <DialogFooter className="px-0 py-0 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-t border-gradient-to-r from-gray-200 via-gray-100 to-gray-200 -mx-6 -mb-6 mt-0 relative overflow-hidden">
+          {/* Animated Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-pink-50/30 animate-pulse" />
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full -translate-x-16 -translate-y-16 animate-bounce" style={{ animationDuration: '3s' }} />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-full translate-x-12 -translate-y-12 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+          </div>
+
+          <div className="flex gap-4 w-full p-4 relative z-10">
+            {/* Enhanced Cancel Button */}
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 h-10 font-medium border border-gray-300 hover:bg-gray-100 rounded-lg text-sm"
+              className="group relative flex-1 h-12 font-semibold border-2 border-gray-300 hover:border-red-400 bg-white hover:bg-red-50 text-gray-700 hover:text-red-600 rounded-xl shadow-md hover:shadow-xl transition-all duration-500 text-sm overflow-hidden transform hover:scale-105 active:scale-95"
               data-testid="cancel-create-team"
             >
-              Cancel
+              {/* Button Background Animation */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/5 to-red-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              
+              {/* Button Content */}
+              <div className="relative flex items-center justify-center gap-2">
+                <X className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                <span className="font-bold">Cancel</span>
+              </div>
+
+              {/* Subtle Glow Effect */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/0 via-red-500/20 to-red-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
             </Button>
+
+            {/* Enhanced Create/Save Button */}
             <Button
-              className={`flex-1 h-10 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} hover:opacity-90 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-sm`}
+              className={`group relative flex-1 h-12 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 via-blue-700 to-purple-600"} hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 text-sm overflow-hidden transform hover:scale-105 active:scale-95 disabled:opacity-75 disabled:cursor-not-allowed disabled:transform-none`}
               onClick={handleSubmit(onSubmit)}
               disabled={createTeamMutation.isPending}
               data-testid="create-team-submit"
             >
-              {createTeamMutation.isPending ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  {isEditing ? "Saving..." : "Creating..."}
-                </div>
-              ) : isEditing ? (
-                "Save Changes"
-              ) : (
-                "Create Team"
-              )}
+              {/* Animated Background Shimmer */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              
+              {/* Success Ripple Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/30 to-green-400/0 scale-0 group-active:scale-150 transition-transform duration-300 rounded-xl" />
+
+              {/* Button Content */}
+              <div className="relative flex items-center justify-center gap-3">
+                {createTeamMutation.isPending ? (
+                  <>
+                    {/* Enhanced Loading Animation */}
+                    <div className="relative">
+                      <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="absolute inset-0 w-5 h-5 border-3 border-transparent border-l-white/50 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '0.8s' }} />
+                    </div>
+                    <span className="font-bold tracking-wide">
+                      {isEditing ? "Saving Team..." : "Creating Team..."}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {/* Dynamic Icon Based on Action */}
+                    <div className="relative">
+                      {isEditing ? (
+                        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                          <Crown className="w-3 h-3 text-white group-hover:scale-110 transition-transform duration-300" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                          <Users className="w-3 h-3 text-white group-hover:scale-110 transition-transform duration-300" />
+                        </div>
+                      )}
+                      
+                      {/* Icon Glow Effect */}
+                      <div className="absolute inset-0 w-5 h-5 rounded-full bg-white/30 scale-0 group-hover:scale-150 transition-transform duration-500 blur-sm" />
+                    </div>
+                    
+                    <span className="font-bold tracking-wide">
+                      {isEditing ? "Save Changes" : "Create Team"}
+                    </span>
+
+                    {/* Action Arrow */}
+                    <div className="transform translate-x-0 group-hover:translate-x-1 transition-transform duration-300">
+                      →
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Button Border Glow */}
+              <div className="absolute inset-0 rounded-xl border-2 border-white/20 group-hover:border-white/40 transition-colors duration-300" />
+              
+              {/* Success Flash */}
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-green-400/50 to-green-400/0 opacity-0 group-focus:opacity-100 transition-opacity duration-200 rounded-xl" />
             </Button>
+          </div>
+
+          {/* Footer Status Indicator */}
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent">
+            <div className={`h-full bg-gradient-to-r ${selectedGame?.color || "from-blue-500 to-purple-500"} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center`} />
           </div>
         </DialogFooter>
       </DialogContent>
