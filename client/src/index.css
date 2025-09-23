@@ -180,4 +180,96 @@
       box-shadow: 0 0 20px hsla(var(--accent), 0.8), 0 0 30px hsla(var(--accent), 0.6); 
     }
   }
+
+/* Custom Tournament Card Animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(var(--primary), 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(var(--primary), 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced Gradient Classes */
+.gradient-fire {
+  background: linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35);
+}
+
+.gradient-electric {
+  background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+}
+
+.gradient-victory {
+  background: linear-gradient(135deg, #ffecd2, #fcb69f, #ffecd2);
+}
+
+/* Text Gradients */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+  .grid-tournament-mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-tournament-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .grid-tournament-desktop {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+}
 }

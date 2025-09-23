@@ -55,7 +55,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 ${getGradientClass(match.tournament.game)} rounded-lg flex items-center justify-center`}>
+            <div className={`w-12 h-12 ${getGradientClass(match.tournament?.game || 'bgmi')} rounded-lg flex items-center justify-center`}>
               <Target className="w-6 h-6 text-black" />
             </div>
             <div>
@@ -119,16 +119,16 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             Live updates • Real-time scoring
           </div>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               data-testid={`view-details-${match.id}`}
             >
               <Users className="w-4 h-4 mr-1" />
               Details
             </Button>
-            <Button 
-              className={`${getGradientClass(match.tournament.game)} text-black font-medium`}
+            <Button
+              className={`${getGradientClass(match.tournament?.game || 'bgmi')} text-black font-medium`}
               size="sm"
               data-testid={`watch-live-${match.id}`}
             >
