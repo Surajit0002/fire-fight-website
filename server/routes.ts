@@ -305,7 +305,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Only team captain can add members" });
       }
 
-      const member = await storage.addTeamMember(teamId, req.body.userId, req.body.role);
+      let playerId = req.body.userId;
+      
+      // If userId is not provided, create a new user with the provided details
+      if (!playerId && req.body.username) {
+        // Check if user with this username already exists
+        let existingUser = await storage.getUserByUsername(req.body.username);
+        
+        if (!existingUser) {
+          // Create new user
+          const newUser = await storage.upsertUser({
+            username: req.body.username,
+            gameId: req.body.gameId || null,
+            phone: req.body.phone || null,
+            firstName: req.body.username, // Use username as firstName for now
+          });
+          playerId = newUser.id;
+        } else {
+          playerId = existingUser.id;
+        }
+      }
+      
+      if (!playerId) {
+        return res.status(400).json({ message: "User ID or username is required" });
+      }
+
+      const member = await storage.addTeamMember(teamId, playerId, req.body.role || "player");
       res.json(member);
     } catch (error) {
       console.error("Error adding team member:", error);

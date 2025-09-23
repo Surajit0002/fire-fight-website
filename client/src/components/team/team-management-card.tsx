@@ -347,8 +347,6 @@ export default function TeamManagementCard({
                 Copy Code
               </Button>
             </div>
-          </div>
-        </div>
         
         {/* Enhanced Stats Section */}
         <div className="px-2 py-2 bg-slate-800/50 backdrop-blur-sm">
