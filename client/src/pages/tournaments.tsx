@@ -19,6 +19,7 @@ export default function Tournaments() {
   const [entryFeeFilter, setEntryFeeFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [page, setPage] = useState(1);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const { data: tournaments, isLoading } = useQuery({
     queryKey: ["/api/tournaments", { page, limit: 20 }],
@@ -77,135 +78,251 @@ export default function Tournaments() {
       </section>
 
       {/* Filters Section */}
-      <section className="bg-card/50 py-8 border-y border-border sticky top-16 z-40 backdrop-blur-xl">
+      <section className="bg-card/50 py-4 border-y border-border sticky top-16 z-40 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Search and Filter Row */}
-          <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
-            <div className="flex flex-wrap gap-3 items-center">
-              <div className="relative">
-                <Input 
-                  type="text" 
-                  placeholder="Search tournaments..." 
-                  className="pl-10 w-80"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  data-testid="input-search-tournaments"
-                />
-                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-              </div>
-              <Button variant="secondary" size="sm" data-testid="button-advanced-filters">
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Filters
-              </Button>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-40" data-testid="select-sort">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="prize">Prize Pool</SelectItem>
-                  <SelectItem value="startTime">Start Time</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          {/* Main Filter Row */}
+          <div className="flex items-center justify-between gap-4">
+            {/* Left - Advanced Filters Button */}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowAdvancedFilters(true)}
+              className="flex items-center gap-2 h-10 px-4 border-2 hover:bg-primary/10 hover:border-primary/30 transition-all duration-200"
+              data-testid="button-advanced-filters"
+            >
+              <Filter className="w-4 h-4" />
+              <span className="hidden sm:inline">Filters</span>
+              {(selectedGame !== "all" || selectedStatus !== "all" || entryFeeFilter !== "all") && (
+                <Badge className="ml-1 bg-primary text-primary-foreground text-xs h-5 w-5 p-0 flex items-center justify-center">
+                  {[selectedGame !== "all", selectedStatus !== "all", entryFeeFilter !== "all"].filter(Boolean).length}
+                </Badge>
+              )}
+            </Button>
 
-          {/* Quick Filters */}
-          <div className="flex flex-wrap gap-3 items-center">
-            <Button 
-              variant={selectedStatus === "all" ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setSelectedStatus("all")}
-              data-testid="filter-all-status"
-            >
-              All
-            </Button>
-            <Button 
-              variant={selectedStatus === "upcoming" ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setSelectedStatus("upcoming")}
-              data-testid="filter-upcoming"
-            >
-              Upcoming
-            </Button>
-            <Button 
-              variant={selectedStatus === "live" ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setSelectedStatus("live")}
-              data-testid="filter-live"
-            >
-              <span className="w-2 h-2 bg-destructive rounded-full animate-pulse mr-2"></span>
-              Live Now
-            </Button>
-            <Button 
-              variant={entryFeeFilter === "free" ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setEntryFeeFilter("free")}
-              data-testid="filter-free"
-            >
-              Free Entry
-            </Button>
-            <Button 
-              variant={entryFeeFilter === "paid" ? "default" : "secondary"} 
-              size="sm"
-              onClick={() => setEntryFeeFilter("paid")}
-              data-testid="filter-paid"
-            >
-              Cash Prizes
-            </Button>
-            
-            <div className="ml-4 flex gap-2">
-              <Select value={selectedGame} onValueChange={setSelectedGame}>
-                <SelectTrigger className="w-32" data-testid="select-game">
-                  <SelectValue placeholder="Game" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Games</SelectItem>
-                  <SelectItem value="bgmi">BGMI</SelectItem>
-                  <SelectItem value="free fire">Free Fire</SelectItem>
-                  <SelectItem value="cod mobile">COD Mobile</SelectItem>
-                  <SelectItem value="valorant">Valorant</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Active Filters */}
-          {(searchQuery || selectedGame !== "all" || selectedStatus !== "all" || entryFeeFilter !== "all") && (
-            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border">
-              <span className="text-sm text-muted-foreground mr-2">Active filters:</span>
+            {/* Center - Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Input 
+                type="text" 
+                placeholder="Search tournaments..." 
+                className="pl-10 h-10 border-2 focus:border-primary/50 transition-all duration-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                data-testid="input-search-tournaments"
+              />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               {searchQuery && (
-                <Badge variant="secondary" className="gap-1" data-testid="filter-search-badge">
-                  Search: {searchQuery}
-                  <button onClick={() => setSearchQuery("")} className="ml-1 hover:text-destructive">×</button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-muted"
+                  onClick={() => setSearchQuery("")}
+                >
+                  ×
+                </Button>
+              )}
+            </div>
+
+            {/* Right - Sort Dropdown */}
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-40 h-10 border-2 focus:border-primary/50" data-testid="select-sort">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent className="rounded-lg border-2 shadow-xl">
+                <SelectItem value="newest">🆕 Newest</SelectItem>
+                <SelectItem value="prize">💰 Prize Pool</SelectItem>
+                <SelectItem value="startTime">⏰ Start Time</SelectItem>
+                <SelectItem value="popular">🔥 Most Popular</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Active Filters Pills */}
+          {(searchQuery || selectedGame !== "all" || selectedStatus !== "all" || entryFeeFilter !== "all") && (
+            <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-border/50">
+              <span className="text-xs text-muted-foreground mr-1 flex items-center">
+                <Filter className="w-3 h-3 mr-1" />
+                Active:
+              </span>
+              {searchQuery && (
+                <Badge variant="secondary" className="gap-1 text-xs" data-testid="filter-search-badge">
+                  🔍 "{searchQuery}"
+                  <button onClick={() => setSearchQuery("")} className="ml-1 hover:text-destructive text-xs">×</button>
                 </Badge>
               )}
               {selectedGame !== "all" && (
-                <Badge variant="secondary" className="gap-1" data-testid="filter-game-badge">
-                  Game: {selectedGame}
-                  <button onClick={() => setSelectedGame("all")} className="ml-1 hover:text-destructive">×</button>
+                <Badge variant="secondary" className="gap-1 text-xs" data-testid="filter-game-badge">
+                  🎮 {selectedGame.toUpperCase()}
+                  <button onClick={() => setSelectedGame("all")} className="ml-1 hover:text-destructive text-xs">×</button>
                 </Badge>
               )}
               {selectedStatus !== "all" && (
-                <Badge variant="secondary" className="gap-1" data-testid="filter-status-badge">
-                  Status: {selectedStatus}
-                  <button onClick={() => setSelectedStatus("all")} className="ml-1 hover:text-destructive">×</button>
+                <Badge variant="secondary" className="gap-1 text-xs" data-testid="filter-status-badge">
+                  📊 {selectedStatus}
+                  <button onClick={() => setSelectedStatus("all")} className="ml-1 hover:text-destructive text-xs">×</button>
                 </Badge>
               )}
               {entryFeeFilter !== "all" && (
-                <Badge variant="secondary" className="gap-1" data-testid="filter-entry-badge">
-                  Entry: {entryFeeFilter}
-                  <button onClick={() => setEntryFeeFilter("all")} className="ml-1 hover:text-destructive">×</button>
+                <Badge variant="secondary" className="gap-1 text-xs" data-testid="filter-entry-badge">
+                  💵 {entryFeeFilter}
+                  <button onClick={() => setEntryFeeFilter("all")} className="ml-1 hover:text-destructive text-xs">×</button>
                 </Badge>
               )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs h-6 px-2 text-muted-foreground hover:text-destructive"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedGame("all");
+                  setSelectedStatus("all");
+                  setEntryFeeFilter("all");
+                }}
+              >
+                Clear all
+              </Button>
             </div>
           )}
         </div>
       </section>
+
+      {/* Advanced Filters Modal */}
+      {showAdvancedFilters && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowAdvancedFilters(false)}
+          />
+          
+          {/* Modal Content */}
+          <div className="relative bg-card border border-border rounded-xl shadow-2xl w-full max-w-md mx-4 max-h-[80vh] overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 px-6 py-4 border-b border-border">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-primary" />
+                  Advanced Filters
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAdvancedFilters(false)}
+                  className="h-8 w-8 p-0 hover:bg-muted"
+                >
+                  ×
+                </Button>
+              </div>
+            </div>
+
+            {/* Filters Content */}
+            <div className="p-6 space-y-6">
+              {/* Game Type Filter */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  🎮 Game Type
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "all", label: "All Games", icon: "🎯" },
+                    { value: "bgmi", label: "BGMI", icon: "🎮" },
+                    { value: "free fire", label: "Free Fire", icon: "🔥" },
+                    { value: "cod mobile", label: "COD Mobile", icon: "⚡" },
+                    { value: "valorant", label: "Valorant", icon: "🎯" },
+                    { value: "pubg mobile", label: "PUBG Mobile", icon: "🏆" }
+                  ].map((game) => (
+                    <Button
+                      key={game.value}
+                      variant={selectedGame === game.value ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedGame(game.value)}
+                      className="justify-start text-xs h-9"
+                    >
+                      <span className="mr-2">{game.icon}</span>
+                      {game.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tournament Status */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  📊 Tournament Status
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "all", label: "All Status", icon: "📋" },
+                    { value: "upcoming", label: "Upcoming", icon: "⏳" },
+                    { value: "live", label: "Live Now", icon: "🔴" },
+                    { value: "completed", label: "Completed", icon: "✅" }
+                  ].map((status) => (
+                    <Button
+                      key={status.value}
+                      variant={selectedStatus === status.value ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedStatus(status.value)}
+                      className="justify-start text-xs h-9"
+                    >
+                      <span className="mr-2">{status.icon}</span>
+                      {status.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Entry Fee Filter */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                  💰 Entry Fee
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { value: "all", label: "All Tournaments", icon: "💼" },
+                    { value: "free", label: "Free Entry Only", icon: "🆓" },
+                    { value: "paid", label: "Cash Prizes Only", icon: "💵" }
+                  ].map((fee) => (
+                    <Button
+                      key={fee.value}
+                      variant={entryFeeFilter === fee.value ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setEntryFeeFilter(fee.value)}
+                      className="justify-start text-xs h-9"
+                    >
+                      <span className="mr-2">{fee.icon}</span>
+                      {fee.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-border bg-muted/20">
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedGame("all");
+                    setSelectedStatus("all");
+                    setEntryFeeFilter("all");
+                  }}
+                  className="flex-1"
+                >
+                  Reset All
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setShowAdvancedFilters(false)}
+                  className="flex-1 bg-primary hover:bg-primary/90"
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Featured Tournaments */}
       {featuredTournaments && featuredTournaments.length > 0 && (
