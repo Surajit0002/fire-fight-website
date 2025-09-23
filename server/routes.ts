@@ -12,7 +12,7 @@ import { z } from "zod";
 let stripe: Stripe | null = null;
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2023-10-16",
+    apiVersion: "2025-08-27.basil",
   });
   console.log("Stripe payment processing enabled");
 } else {
@@ -25,7 +25,7 @@ const upload = multer({
   limits: {
     fileSize: 2 * 1024 * 1024, // 2MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: any, file: any, cb: any) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -149,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Tournament not found" });
       }
 
-      if (tournament.currentParticipants >= tournament.maxParticipants) {
+      if ((tournament.currentParticipants || 0) >= tournament.maxParticipants) {
         return res.status(400).json({ message: "Tournament is full" });
       }
 
@@ -410,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const members = await storage.getTeamMembers(team.id);
-      if (members.length >= team.maxPlayers) {
+      if (members.length >= (team.maxPlayers || 4)) {
         return res.status(400).json({ message: "Team is already full" });
       }
       
@@ -523,7 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Update wallet balance
         const user = await storage.getUser(userId);
-        if (user) {
+        if (user && user.walletBalance) {
           const newBalance = (parseFloat(user.walletBalance) + parseFloat(amount)).toString();
           await storage.updateUserWalletBalance(userId, newBalance);
           
@@ -923,7 +923,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Mock pending withdrawals - replace with real data
-      const pendingWithdrawals = [];
+      const pendingWithdrawals: any[] = [];
       
       res.json(pendingWithdrawals);
     } catch (error) {
