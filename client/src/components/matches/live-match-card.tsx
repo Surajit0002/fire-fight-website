@@ -46,7 +46,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
   };
 
   // Add null checks for match data
-  if (!match) {
+  if (!match || !match.tournament) {
     return null;
   }
 

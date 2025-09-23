@@ -38,23 +38,31 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/tournaments" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-tournaments">
-                  Tournaments
+                <Link href="/tournaments">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-tournaments">
+                    Tournaments
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-leaderboard">
-                  Leaderboard
+                <Link href="/leaderboard">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-leaderboard">
+                    Leaderboard
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="/teams" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-teams">
-                  Teams
+                <Link href="/teams">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-teams">
+                    Teams
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-support">
-                  Support
+                <Link href="#">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-support">
+                    Support
+                  </span>
                 </Link>
               </li>
             </ul>
@@ -65,23 +73,31 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-terms">
-                  Terms & Conditions
+                <Link href="#">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-terms">
+                    Terms & Conditions
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-privacy">
-                  Privacy Policy
+                <Link href="#">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-privacy">
+                    Privacy Policy
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-refund">
-                  Refund Policy
+                <Link href="#">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-refund">
+                    Refund Policy
+                  </span>
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-responsible">
-                  Responsible Gaming
+                <Link href="#">
+                  <span className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-responsible">
+                    Responsible Gaming
+                  </span>
                 </Link>
               </li>
             </ul>
