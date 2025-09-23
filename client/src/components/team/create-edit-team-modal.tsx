@@ -262,7 +262,7 @@ export default function CreateEditTeamModal({
           </div>
         </DialogHeader>
 
-        <div className="px-0 py-3 space-y-3 flex-1 overflow-y-auto">
+        <div className="space-y-3 flex-1 overflow-y-auto">
           {/* Team Setup Section */}
           <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
             <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
