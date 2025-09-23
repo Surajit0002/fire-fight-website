@@ -197,6 +197,80 @@
   0%, 100% {
     box-shadow: 0 0 20px rgba(var(--primary), 0.3);
   }
+
+/* Compact Tournament Card Styles */
+.tournament-card-compact {
+  @apply bg-card/60 backdrop-blur-md border-border/40 hover:border-primary/60;
+  @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-xl;
+  @apply rounded-xl overflow-hidden h-full;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)/80%) 100%);
+}
+
+.tournament-card-compact:hover {
+  background: linear-gradient(135deg, hsl(var(--card)/90%) 0%, hsl(var(--card)) 100%);
+  box-shadow: 0 20px 40px -12px hsla(var(--primary), 0.25);
+}
+
+.tournament-status-live {
+  @apply bg-red-500 text-white animate-pulse;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.tournament-status-upcoming {
+  @apply bg-blue-500 text-white;
+}
+
+.tournament-status-completed {
+  @apply bg-gray-500 text-white;
+}
+
+.tournament-status-open {
+  @apply bg-green-500 text-white;
+}
+
+/* Responsive Grid Utilities */
+@media (max-width: 640px) {
+  .tournament-grid-mobile {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .tournament-grid-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tournament-grid-desktop {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .tournament-grid-large {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* Tournament Card Animation Stagger */
+.tournament-card-stagger {
+  animation: fade-in-up 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes fade-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
   50% {
     box-shadow: 0 0 30px rgba(var(--primary), 0.6);
   }
