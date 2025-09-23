@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -195,14 +194,41 @@ export default function CreateEditTeamModal({
   };
 
   const gameTypes = [
-    { value: "BGMI", label: "BGMI", icon: "🎮", color: "from-blue-500 to-indigo-600" },
-    { value: "Free Fire", label: "Free Fire", icon: "🔥", color: "from-orange-500 to-red-600" },
-    { value: "COD Mobile", label: "COD Mobile", icon: "⚡", color: "from-green-500 to-emerald-600" },
-    { value: "Valorant", label: "Valorant", icon: "🎯", color: "from-red-500 to-pink-600" },
-    { value: "PUBG Mobile", label: "PUBG Mobile", icon: "🏆", color: "from-purple-500 to-indigo-600" },
+    {
+      value: "BGMI",
+      label: "BGMI",
+      icon: "🎮",
+      color: "from-blue-500 to-indigo-600",
+    },
+    {
+      value: "Free Fire",
+      label: "Free Fire",
+      icon: "🔥",
+      color: "from-orange-500 to-red-600",
+    },
+    {
+      value: "COD Mobile",
+      label: "COD Mobile",
+      icon: "⚡",
+      color: "from-green-500 to-emerald-600",
+    },
+    {
+      value: "Valorant",
+      label: "Valorant",
+      icon: "🎯",
+      color: "from-red-500 to-pink-600",
+    },
+    {
+      value: "PUBG Mobile",
+      label: "PUBG Mobile",
+      icon: "🏆",
+      color: "from-purple-500 to-indigo-600",
+    },
   ];
 
-  const selectedGame = gameTypes.find(game => game.value === watch("gameType"));
+  const selectedGame = gameTypes.find(
+    (game) => game.value === watch("gameType"),
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -211,12 +237,14 @@ export default function CreateEditTeamModal({
         data-testid="create-edit-team-modal"
       >
         {/* Enhanced Header */}
-        <DialogHeader className={`px-6 py-6 bg-gradient-to-r ${selectedGame?.color || 'from-blue-600 to-purple-600'} text-white -mx-6 -mt-6 mb-0 relative overflow-hidden`}>
+        <DialogHeader
+          className={`px-6 py-6 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} text-white -mx-6 -mt-6 mb-0 relative overflow-hidden`}
+        >
           {/* Background Effects */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10" />
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-20 translate-x-20" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12" />
-          
+
           <div className="flex items-center justify-between relative z-10">
             <DialogTitle className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
@@ -227,34 +255,30 @@ export default function CreateEditTeamModal({
                   {isEditing ? "Edit Team" : "Create Team"}
                 </div>
                 <div className="text-sm text-white/80 font-normal">
-                  {isEditing ? "Update your team information" : "Build your esports squad"}
+                  {isEditing
+                    ? "Update your team information"
+                    : "Build your esports squad"}
                 </div>
               </div>
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-10 w-10 p-0 text-white hover:bg-white/20 rounded-xl"
-            >
-              <X className="w-5 h-5" />
-            </Button>
           </div>
         </DialogHeader>
 
-        <div className="px-6 py-6 space-y-8">
+        <div className="px-2 py-2 space-y-4 ">
           {/* Team Setup Section */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
-            <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <div className="bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
               <Star className="w-5 h-5 text-blue-500" />
               Team Information
             </h3>
-            
+
             <div className="flex gap-6">
               {/* Team Logo */}
               <div className="flex-shrink-0">
                 <div className="relative group">
-                  <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedGame?.color || 'from-blue-500 to-purple-600'} border-4 border-white shadow-xl flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}>
+                  <div
+                    className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedGame?.color || "from-blue-500 to-purple-600"} border-4 border-white shadow-xl flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}
+                  >
                     {logoPreview ? (
                       <img
                         src={logoPreview}
@@ -264,7 +288,9 @@ export default function CreateEditTeamModal({
                     ) : (
                       <div className="text-center">
                         <Camera className="w-8 h-8 text-white mb-1" />
-                        <span className="text-xs font-medium text-white">Logo</span>
+                        <span className="text-xs font-medium text-white">
+                          Logo
+                        </span>
                       </div>
                     )}
                     <input
@@ -324,10 +350,16 @@ export default function CreateEditTeamModal({
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border-2 shadow-xl">
                           {gameTypes.map((game) => (
-                            <SelectItem key={game.value} value={game.value} className="rounded-lg">
+                            <SelectItem
+                              key={game.value}
+                              value={game.value}
+                              className="rounded-lg"
+                            >
                               <div className="flex items-center gap-3">
                                 <span className="text-lg">{game.icon}</span>
-                                <span className="font-medium">{game.label}</span>
+                                <span className="font-medium">
+                                  {game.label}
+                                </span>
                               </div>
                             </SelectItem>
                           ))}
@@ -343,7 +375,9 @@ export default function CreateEditTeamModal({
                       </label>
                       <Select
                         value={watch("maxPlayers")?.toString()}
-                        onValueChange={(value) => setValue("maxPlayers", parseInt(value))}
+                        onValueChange={(value) =>
+                          setValue("maxPlayers", parseInt(value))
+                        }
                       >
                         <SelectTrigger className="h-12 bg-gray-50 border-2 border-gray-200 focus:border-blue-400 rounded-xl">
                           <SelectValue />
@@ -392,7 +426,10 @@ export default function CreateEditTeamModal({
                 <Users className="w-5 h-5 text-blue-500" />
                 Team Members
               </h3>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-300 px-3 py-1">
+              <Badge
+                variant="outline"
+                className="bg-blue-50 text-blue-700 border-blue-300 px-3 py-1"
+              >
                 {teamMembers.length}/{watch("maxPlayers") || 4}
               </Badge>
             </div>
@@ -410,20 +447,25 @@ export default function CreateEditTeamModal({
                         <Avatar className="w-12 h-12 border-2 border-white shadow-lg">
                           <AvatarImage src={member.user?.profileImageUrl} />
                           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-sm">
-                            {member.user?.username?.charAt(0).toUpperCase() || "M"}
+                            {member.user?.username?.charAt(0).toUpperCase() ||
+                              "M"}
                           </AvatarFallback>
                         </Avatar>
                         <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200">
                           {getRoleIcon(member.role)}
                         </div>
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-gray-800 truncate mb-1">
                           {member.user?.username || "Player"}
                         </div>
-                        <Badge variant="outline" className={`text-xs px-2 py-0.5 ${getRoleBadgeColor(member.role)}`}>
-                          {member.role?.charAt(0).toUpperCase() + member.role?.slice(1)}
+                        <Badge
+                          variant="outline"
+                          className={`text-xs px-2 py-0.5 ${getRoleBadgeColor(member.role)}`}
+                        >
+                          {member.role?.charAt(0).toUpperCase() +
+                            member.role?.slice(1)}
                         </Badge>
                         <div className="text-xs text-gray-500 mt-1 truncate">
                           ID: {member.user?.gameId || "123456"}
@@ -435,7 +477,10 @@ export default function CreateEditTeamModal({
 
                 {/* Empty Slots */}
                 {Array.from({
-                  length: Math.min(6 - teamMembers.length, (watch("maxPlayers") || 4) - teamMembers.length),
+                  length: Math.min(
+                    6 - teamMembers.length,
+                    (watch("maxPlayers") || 4) - teamMembers.length,
+                  ),
                 }).map((_, index) => (
                   <div
                     key={`empty-${index}`}
@@ -458,7 +503,9 @@ export default function CreateEditTeamModal({
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mx-auto mb-4">
                   <Users className="w-10 h-10 text-blue-500" />
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">No members yet</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  No members yet
+                </h4>
                 <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
                   Start building your team by adding players to your squad
                 </p>
@@ -495,7 +542,7 @@ export default function CreateEditTeamModal({
               Cancel
             </Button>
             <Button
-              className={`flex-1 h-12 bg-gradient-to-r ${selectedGame?.color || 'from-blue-600 to-purple-600'} hover:opacity-90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}
+              className={`flex-1 h-12 bg-gradient-to-r ${selectedGame?.color || "from-blue-600 to-purple-600"} hover:opacity-90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}
               onClick={handleSubmit(onSubmit)}
               disabled={createTeamMutation.isPending}
               data-testid="create-team-submit"
@@ -505,8 +552,10 @@ export default function CreateEditTeamModal({
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   {isEditing ? "Saving..." : "Creating..."}
                 </div>
+              ) : isEditing ? (
+                "Save Changes"
               ) : (
-                isEditing ? "Save Changes" : "Create Team"
+                "Create Team"
               )}
             </Button>
           </div>
