@@ -188,7 +188,7 @@ export default function AddEditPlayerModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className={`w-[95vw] max-w-2xl max-h-[95vh] overflow-y-auto ${getModalGradient(mode)} border-0 shadow-2xl`}
+        className={`max-w-md max-h-[85vh] overflow-hidden ${getModalGradient(mode)} border-0 shadow-2xl`}
         data-testid="add-edit-player-modal"
       >
         {/* Enhanced Header */}
@@ -230,7 +230,7 @@ export default function AddEditPlayerModal({
           {/* Enhanced Avatar Upload */}
           <div className="flex justify-center">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-white to-gray-100 border-4 border-white shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-white to-gray-100 border-4 border-white shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105">
                 {avatarPreview ? (
                   <img 
                     src={avatarPreview} 
@@ -316,7 +316,7 @@ export default function AddEditPlayerModal({
                 </div>
 
                 {/* Role and Game ID in one row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       <Crown className="w-4 h-4 text-gray-500" />
@@ -394,12 +394,31 @@ export default function AddEditPlayerModal({
                 </div>
               </>
             )}
+
+            {/* Enhanced Role Description */}
+            {watch("role") && (
+              <div className="bg-white border-2 border-gray-100 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`w-6 h-6 ${playerRoles.find(r => r.value === watch("role"))?.bgColor} rounded-lg flex items-center justify-center`}>
+                    {playerRoles.find(r => r.value === watch("role"))?.icon}
+                  </div>
+                  <span className="font-semibold text-sm text-gray-700">Role Description</span>
+                </div>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {watch("role") === "captain" && "Team leader with full management rights and strategic oversight"}
+                  {watch("role") === "igl" && "In-Game Leader who makes tactical calls and coordinates team strategy"}
+                  {watch("role") === "fragger" && "Aggressive entry player focused on eliminations and map control"}
+                  {watch("role") === "support" && "Utility specialist who assists teammates and provides tactical support"}
+                  {watch("role") === "player" && "Core team member contributing to overall team performance"}
+                </p>
+              </div>
+            )}
           </form>
         </div>
 
         {/* Enhanced Footer */}
         <DialogFooter className="px-6 py-5 bg-gray-50 border-t border-gray-100 -mx-6 -mb-6 mt-0">
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <div className="flex gap-3 w-full">
             <Button 
               variant="outline" 
               onClick={onClose}

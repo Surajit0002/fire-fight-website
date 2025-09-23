@@ -207,7 +207,7 @@ export default function CreateEditTeamModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="w-[95vw] max-w-4xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl"
+        className="max-w-2xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl"
         data-testid="create-edit-team-modal"
       >
         {/* Enhanced Header */}
@@ -250,11 +250,11 @@ export default function CreateEditTeamModal({
               Team Information
             </h3>
             
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex gap-6">
               {/* Team Logo */}
-              <div className="flex-shrink-0 flex justify-center lg:justify-start">
+              <div className="flex-shrink-0">
                 <div className="relative group">
-                  <div className={`w-32 h-32 lg:w-24 lg:h-24 rounded-2xl bg-gradient-to-br ${selectedGame?.color || 'from-blue-500 to-purple-600'} border-4 border-white shadow-xl flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}>
+                  <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedGame?.color || 'from-blue-500 to-purple-600'} border-4 border-white shadow-xl flex items-center justify-center overflow-hidden cursor-pointer group-hover:scale-105 transition-all duration-300`}>
                     {logoPreview ? (
                       <img
                         src={logoPreview}
@@ -305,7 +305,7 @@ export default function CreateEditTeamModal({
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     {/* Game Type */}
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
@@ -367,20 +367,20 @@ export default function CreateEditTeamModal({
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Button
               type="button"
               onClick={() => onAddPlayer(team?.id || "new")}
-              className="h-16 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+              className="h-14 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <UserPlus className="w-6 h-6 mr-3" />
+              <UserPlus className="w-5 h-5 mr-2" />
               Add Player
             </Button>
             <Button
               type="button"
-              className="h-16 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+              className="h-14 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <Send className="w-6 h-6 mr-3" />
+              <Send className="w-5 h-5 mr-2" />
               Invite Player
             </Button>
           </div>
@@ -398,7 +398,7 @@ export default function CreateEditTeamModal({
             </div>
 
             {teamMembers.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-4 mb-4">
                 {/* Current Team Members */}
                 {teamMembers.slice(0, 6).map((member: any, index: number) => (
                   <div
@@ -485,7 +485,7 @@ export default function CreateEditTeamModal({
 
         {/* Enhanced Footer */}
         <DialogFooter className="px-6 py-5 bg-gray-50 border-t border-gray-200 -mx-6 -mb-6 mt-0">
-          <div className="flex flex-col sm:flex-row gap-4 w-full">
+          <div className="flex gap-4 w-full">
             <Button
               variant="outline"
               onClick={onClose}
