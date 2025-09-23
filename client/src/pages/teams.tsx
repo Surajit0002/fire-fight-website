@@ -6,6 +6,7 @@ import MobileHeader from "@/components/layout/mobile-header";
 import MobileNav from "@/components/layout/mobile-nav";
 import Footer from "@/components/layout/footer";
 import TeamManagementCard from "@/components/team/team-management-card";
+import CompactTeamCard from "@/components/team/compact-team-card";
 import CreateEditTeamModal from "@/components/team/create-edit-team-modal";
 import AddEditPlayerModal from "@/components/team/add-edit-player-modal";
 import JoinTeamModal from "@/components/team/join-team-modal";
@@ -256,17 +257,17 @@ export default function Teams() {
             </div>
 
             {teamsToDisplay && teamsToDisplay.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" data-testid="user-teams-grid">
-                {teamsToDisplay.map((team: any) => (
-                  <TeamManagementCard 
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" data-testid="user-teams-grid">
+                {teamsToDisplay.map((team: any, index: number) => (
+                  <CompactTeamCard 
                     key={team.id} 
                     team={team}
                     onEdit={handleEditTeam}
                     onDelete={handleDeleteTeam}
                     onAddPlayer={handleAddPlayer}
-                    onEditPlayer={handleEditPlayer}
                     onCopyCode={copyTeamCode}
                     isOwner={true}
+                    gradientIndex={index}
                   />
                 ))}
               </div>
