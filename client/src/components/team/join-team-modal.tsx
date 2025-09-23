@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +7,8 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogFooter 
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,6 +63,9 @@ export default function JoinTeamModal({
             <UserPlus className="w-6 h-6" />
             Join Team
           </DialogTitle>
+          <DialogDescription>
+              Enter the team invitation code to join an existing team.
+            </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

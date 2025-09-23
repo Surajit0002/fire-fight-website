@@ -6,7 +6,8 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogFooter 
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,7 +42,7 @@ export default function JoinModal({
   const { user } = useAuth();
   const [participationType, setParticipationType] = useState<'solo' | 'team'>('solo');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
-  
+
   const { data: userTeams } = useQuery({
     queryKey: ["/api/user/teams"],
     enabled: isOpen && !!user,
@@ -85,6 +86,9 @@ export default function JoinModal({
             <Trophy className="w-6 h-6" />
             Join Tournament
           </DialogTitle>
+          <DialogDescription>
+              Select your team and confirm your participation in this tournament.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -97,7 +101,7 @@ export default function JoinModal({
                 </h3>
                 <Badge variant="secondary">{tournament.game}</Badge>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Entry Fee</span>
@@ -147,7 +151,7 @@ export default function JoinModal({
                   Solo Entry
                 </Label>
               </div>
-              
+
               {canJoinAsTeam && (
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="team" id="team" />
@@ -201,20 +205,20 @@ export default function JoinModal({
                   <CreditCard className="w-4 h-4" />
                   Payment Summary
                 </h5>
-                
+
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span>Entry Fee</span>
                     <span data-testid="payment-entry-fee">₹{entryFee.toLocaleString('en-IN')}</span>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="flex items-center justify-between font-semibold">
                     <span>Total Amount</span>
                     <span data-testid="payment-total">₹{entryFee.toLocaleString('en-IN')}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-sm">
                     <Wallet className="w-4 h-4" />
                     <span>Wallet Balance: ₹{currentBalance.toLocaleString('en-IN')}</span>
@@ -224,7 +228,7 @@ export default function JoinModal({
                       </Badge>
                     )}
                   </div>
-                  
+
                   {!hasEnoughBalance && (
                     <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 text-destructive" />
@@ -254,7 +258,7 @@ export default function JoinModal({
           <Button variant="outline" onClick={onClose} data-testid="cancel-join">
             Cancel
           </Button>
-          
+
           {entryFee > 0 && !hasEnoughBalance ? (
             <Button 
               variant="secondary" 

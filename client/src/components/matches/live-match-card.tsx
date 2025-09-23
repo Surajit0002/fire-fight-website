@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Target, Eye, Users, Clock } from "lucide-react";
+import { Target, Eye, Users, Clock, Circle } from "lucide-react";
 
 interface LiveMatchCardProps {
   match: {
@@ -38,12 +38,17 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
     const start = new Date(dateString);
     const diffMs = now.getTime() - start.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    
+
     if (diffMins < 1) return 'Just started';
     if (diffMins < 60) return `${diffMins}m ago`;
     const diffHours = Math.floor(diffMins / 60);
     return `${diffHours}h ${diffMins % 60}m ago`;
   };
+
+  // Add null checks for match data
+  if (!match) {
+    return null;
+  }
 
   return (
     <Card className="bg-card rounded-xl p-0 overflow-hidden border border-border glass-effect" data-testid={`live-match-${match.id}`}>
@@ -67,7 +72,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             LIVE
           </Badge>
         </div>
-        
+
         {/* Match Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="text-center">
@@ -83,7 +88,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             <div className="text-sm text-muted-foreground">Duration</div>
           </div>
         </div>
-        
+
         {/* Live Stats */}
         <div className="bg-muted/30 rounded-lg p-3 mb-4">
           <div className="grid grid-cols-3 gap-4 text-center">
@@ -107,7 +112,7 @@ export default function LiveMatchCard({ match }: LiveMatchCardProps) {
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">

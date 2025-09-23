@@ -38,30 +38,24 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/tournaments">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-tournaments">
-                    Tournaments
-                  </a>
+                <Link href="/tournaments" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-tournaments">
+                  Tournaments
                 </Link>
               </li>
               <li>
-                <Link href="/leaderboard">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-leaderboard">
-                    Leaderboard
-                  </a>
+                <Link href="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-leaderboard">
+                  Leaderboard
                 </Link>
               </li>
               <li>
-                <Link href="/teams">
-                  <a className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-teams">
-                    Teams
-                  </a>
+                <Link href="/teams" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-teams">
+                  Teams
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-support">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-support">
                   Support
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -71,29 +65,29 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-terms">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-terms">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-privacy">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-privacy">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-refund">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-refund">
                   Refund Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-responsible">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="footer-responsible">
                   Responsible Gaming
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-border mt-12 pt-8 text-center text-muted-foreground">
           <p>&copy; 2024 FireFight Arena. All rights reserved. | India's #1 Gaming Tournament Platform</p>
         </div>

@@ -8,7 +8,7 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogFooter 
+  DialogDescription 
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,6 +101,9 @@ export default function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProp
             <Users className="w-6 h-6" />
             Create Team
           </DialogTitle>
+          <DialogDescription>
+            Create a new team to participate in tournaments and matches.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
