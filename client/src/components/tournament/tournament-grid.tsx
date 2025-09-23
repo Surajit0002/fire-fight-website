@@ -1,7 +1,8 @@
 import TournamentCard from "./tournament-card";
+import type { Tournament } from "@shared/schema";
 
 interface TournamentGridProps {
-  tournaments: any[];
+  tournaments: Tournament[];
 }
 
 export default function TournamentGrid({ tournaments }: TournamentGridProps) {

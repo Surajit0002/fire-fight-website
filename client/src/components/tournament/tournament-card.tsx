@@ -9,15 +9,15 @@ interface TournamentCardProps {
     id: string;
     title: string;
     game: string;
-    gameMode: string;
-    mapName?: string;
+    gameMode: string | null;
+    mapName?: string | null;
     entryFee: string;
     prizePool: string;
     maxParticipants: number;
-    currentParticipants: number;
-    startTime: string;
+    currentParticipants: number | null;
+    startTime: string | Date | null;
     status: string;
-    imageUrl?: string;
+    imageUrl?: string | null;
   };
 }
 
@@ -61,7 +61,8 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (dateString: string | Date | null) => {
+    if (!dateString) return 'TBD';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-IN', { 
       month: 'short', 
@@ -71,7 +72,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
     });
   };
 
-  const slotsLeft = tournament.maxParticipants - tournament.currentParticipants;
+  const slotsLeft = tournament.maxParticipants - (tournament.currentParticipants || 0);
   const isFull = slotsLeft <= 0;
   const isCompleted = tournament.status === 'completed';
 
@@ -104,7 +105,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
         {/* Slots Indicator */}
         <div className="absolute top-4 right-4">
           <Badge variant="secondary" className="font-mono text-xs" data-testid={`slots-${tournament.id}`}>
-            {tournament.currentParticipants}/{tournament.maxParticipants}
+            {tournament.currentParticipants || 0}/{tournament.maxParticipants}
           </Badge>
         </div>
       </div>
@@ -117,7 +118,7 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
         
         {/* Game Info */}
         <div className="flex items-center gap-2 text-muted-foreground text-sm mb-4">
-          <span>{tournament.gameMode}</span>
+          <span>{tournament.gameMode || 'Squad'}</span>
           {tournament.mapName && (
             <>
               <span>•</span>

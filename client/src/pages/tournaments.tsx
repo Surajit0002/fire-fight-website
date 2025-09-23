@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import type { Tournament } from "@shared/schema";
 import Header from "@/components/layout/header";
 import MobileHeader from "@/components/layout/mobile-header";
 import MobileNav from "@/components/layout/mobile-nav";
@@ -19,17 +20,28 @@ export default function Tournaments() {
   const [entryFeeFilter, setEntryFeeFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [page, setPage] = useState(1);
+  const [allTournaments, setAllTournaments] = useState<Tournament[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const { data: tournaments, isLoading } = useQuery({
+  const { data: tournaments = [], isLoading } = useQuery<Tournament[]>({
     queryKey: ["/api/tournaments", { page, limit: 20 }],
   });
 
-  const { data: featuredTournaments } = useQuery({
+  useEffect(() => {
+    if (tournaments.length > 0) {
+      if (page === 1) {
+        setAllTournaments(tournaments);
+      } else {
+        setAllTournaments(prev => [...prev, ...tournaments]);
+      }
+    }
+  }, [tournaments, page]);
+
+  const { data: featuredTournaments = [] } = useQuery<Tournament[]>({
     queryKey: ["/api/tournaments/featured"],
   });
 
-  const filteredTournaments = tournaments?.filter((tournament: any) => {
+  const filteredTournaments = allTournaments.filter((tournament: Tournament) => {
     const matchesSearch = tournament.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          tournament.game.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesGame = selectedGame === "all" || tournament.game.toLowerCase() === selectedGame;
@@ -39,18 +51,18 @@ export default function Tournaments() {
                            (entryFeeFilter === "paid" && parseFloat(tournament.entryFee) > 0);
     
     return matchesSearch && matchesGame && matchesStatus && matchesEntryFee;
-  }) || [];
+  });
 
   const sortedTournaments = [...filteredTournaments].sort((a, b) => {
     switch (sortBy) {
       case "prize":
         return parseFloat(b.prizePool) - parseFloat(a.prizePool);
       case "startTime":
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+        return new Date(a.startTime || 0).getTime() - new Date(b.startTime || 0).getTime();
       case "popular":
-        return b.currentParticipants - a.currentParticipants;
+        return (b.currentParticipants || 0) - (a.currentParticipants || 0);
       default:
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     }
   });
 
@@ -325,7 +337,7 @@ export default function Tournaments() {
       )}
 
       {/* Featured Tournaments */}
-      {featuredTournaments && featuredTournaments.length > 0 && (
+      {featuredTournaments.length > 0 && (
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold mb-6">Featured Tournaments</h2>
