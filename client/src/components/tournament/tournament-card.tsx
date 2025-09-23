@@ -2,8 +2,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, Trophy, Clock, Gamepad2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Users, Trophy, Clock, Gamepad2, ChevronDown, Target, Zap } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
 
 interface TournamentCardProps {
   tournament: {
@@ -23,6 +25,8 @@ interface TournamentCardProps {
 }
 
 export default function TournamentCard({ tournament, variant = 'default' }: TournamentCardProps) {
+  const [isPrizeModalOpen, setIsPrizeModalOpen] = useState(false);
+
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'live':
@@ -48,6 +52,11 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
   };
 
   const formatCurrency = (amount: string) => {
+    const num = parseFloat(amount);
+    return `₹${num.toLocaleString('en-IN')}`;
+  };
+
+  const formatCurrencyShort = (amount: string) => {
     const num = parseFloat(amount);
     if (num >= 100000) return `₹${(num / 100000).toFixed(0)}L`;
     if (num >= 1000) return `₹${(num / 1000).toFixed(0)}k`;
@@ -187,12 +196,85 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
 
               {/* Tournament Info Pills */}
               <div className="flex gap-2 flex-wrap">
-                <div className="bg-white/10 px-2 py-1 rounded-full text-xs text-white">
+                <div className="bg-blue-500/20 border border-blue-500/30 px-3 py-1.5 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
+                  <Users className="w-3 h-3" />
                   Team Size (4v4)
                 </div>
-                <div className="bg-white/10 px-2 py-1 rounded-full text-xs text-white">
-                  Knockout
+                <div className="bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
+                  <Target className="w-3 h-3" />
+                  Format: Knockout
                 </div>
+                <Dialog open={isPrizeModalOpen} onOpenChange={setIsPrizeModalOpen}>
+                  <DialogTrigger asChild>
+                    <div className="bg-green-500/20 border border-green-500/30 px-3 py-1.5 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
+                      <Trophy className="w-3 h-3" />
+                      Winner Prizes
+                      <ChevronDown className="w-3 h-3" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="bg-gray-900/95 border-gray-700 max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="text-white flex items-center gap-2">
+                        <Trophy className="w-5 h-5 text-yellow-400" />
+                        Prize Distribution
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 rounded-lg border border-yellow-500/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                            🥇
+                          </div>
+                          <span className="text-white font-medium">1st Place</span>
+                        </div>
+                        <span className="text-yellow-400 font-bold text-lg">
+                          {formatCurrency(rank1Prize.toString())}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-lg border border-gray-400/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                            🥈
+                          </div>
+                          <span className="text-white font-medium">2nd Place</span>
+                        </div>
+                        <span className="text-gray-300 font-bold text-lg">
+                          {formatCurrency(rank2Prize.toString())}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-600/10 to-orange-700/10 rounded-lg border border-orange-600/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            🥉
+                          </div>
+                          <span className="text-white font-medium">3rd Place</span>
+                        </div>
+                        <span className="text-orange-400 font-bold text-lg">
+                          {formatCurrency(rank3Prize.toString())}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-lg border border-green-500/20">
+                        <div className="flex items-center gap-3">
+                          <Zap className="w-6 h-6 text-green-400" />
+                          <span className="text-white font-medium">Per Kill Bonus</span>
+                        </div>
+                        <span className="text-green-400 font-bold text-lg">₹2</span>
+                      </div>
+                      
+                      <div className="border-t border-gray-700 pt-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-300 font-medium">Total Prize Pool</span>
+                          <span className="text-white font-bold text-xl">
+                            {formatCurrency(tournament.prizePool)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 
@@ -200,24 +282,24 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
             <div className="flex justify-between items-center py-2">
               <div className="text-center">
                 <div className="text-sm md:text-lg font-bold text-red-400">
-                  {formatCurrency(rank1Prize.toString())}
+                  {formatCurrencyShort(rank1Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 1</div>
               </div>
               <div className="text-center">
                 <div className="text-sm md:text-lg font-bold text-red-400">
-                  {formatCurrency(rank2Prize.toString())}
+                  {formatCurrencyShort(rank2Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 2</div>
               </div>
               <div className="text-center">
                 <div className="text-sm md:text-lg font-bold text-red-400">
-                  {formatCurrency(rank3Prize.toString())}
+                  {formatCurrencyShort(rank3Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 3</div>
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-green-400">+2 per kill</div>
+                <div className="text-sm font-bold text-green-400">+₹2 per kill</div>
               </div>
             </div>
 
@@ -332,41 +414,110 @@ export default function TournamentCard({ tournament, variant = 'default' }: Tour
         {variant !== 'compact' && (
           <>
             {/* Tournament Info Pills */}
-            <div className="flex justify-center gap-2">
-              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+            <div className="flex justify-center gap-2 flex-wrap">
+              <div className="bg-blue-500/20 border border-blue-500/30 px-3 py-1.5 rounded-full text-xs text-blue-300 font-medium flex items-center gap-1">
+                <Users className="w-3 h-3" />
                 Team Size (4v4)
               </div>
-              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+              <div className="bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 rounded-full text-xs text-orange-300 font-medium flex items-center gap-1">
+                <Target className="w-3 h-3" />
                 Format: Knockout
               </div>
-              <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
-                <Trophy className="w-3 h-3" />
-                Winner Prizes
-              </div>
+              <Dialog open={isPrizeModalOpen} onOpenChange={setIsPrizeModalOpen}>
+                <DialogTrigger asChild>
+                  <div className="bg-green-500/20 border border-green-500/30 px-3 py-1.5 rounded-full text-xs text-green-300 font-medium flex items-center gap-1 cursor-pointer hover:bg-green-500/30 transition-colors">
+                    <Trophy className="w-3 h-3" />
+                    Winner Prizes
+                    <ChevronDown className="w-3 h-3" />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="bg-gray-900/95 border-gray-700 max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-white flex items-center gap-2">
+                      <Trophy className="w-5 h-5 text-yellow-400" />
+                      Prize Distribution
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 rounded-lg border border-yellow-500/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                          🥇
+                        </div>
+                        <span className="text-white font-medium">1st Place</span>
+                      </div>
+                      <span className="text-yellow-400 font-bold text-lg">
+                        {formatCurrency(rank1Prize.toString())}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-lg border border-gray-400/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                          🥈
+                        </div>
+                        <span className="text-white font-medium">2nd Place</span>
+                      </div>
+                      <span className="text-gray-300 font-bold text-lg">
+                        {formatCurrency(rank2Prize.toString())}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-600/10 to-orange-700/10 rounded-lg border border-orange-600/20">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          🥉
+                        </div>
+                        <span className="text-white font-medium">3rd Place</span>
+                      </div>
+                      <span className="text-orange-400 font-bold text-lg">
+                        {formatCurrency(rank3Prize.toString())}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-lg border border-green-500/20">
+                      <div className="flex items-center gap-3">
+                        <Zap className="w-6 h-6 text-green-400" />
+                        <span className="text-white font-medium">Per Kill Bonus</span>
+                      </div>
+                      <span className="text-green-400 font-bold text-lg">₹2</span>
+                    </div>
+                    
+                    <div className="border-t border-gray-700 pt-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-300 font-medium">Total Prize Pool</span>
+                        <span className="text-white font-bold text-xl">
+                          {formatCurrency(tournament.prizePool)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Prize Distribution */}
             <div className="flex justify-between items-center py-2">
               <div className="text-center">
                 <div className="text-lg font-bold text-red-400">
-                  {formatCurrency(rank1Prize.toString())}
+                  {formatCurrencyShort(rank1Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 1</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-red-400">
-                  {formatCurrency(rank2Prize.toString())}
+                  {formatCurrencyShort(rank2Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 2</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-bold text-red-400">
-                  {formatCurrency(rank3Prize.toString())}
+                  {formatCurrencyShort(rank3Prize.toString())}
                 </div>
                 <div className="text-xs text-gray-400">Rank 3</div>
               </div>
               <div className="text-center">
-                <div className="text-sm font-bold text-green-400">+2 per kill</div>
+                <div className="text-sm font-bold text-green-400">+₹2 per kill</div>
               </div>
             </div>
           </>
