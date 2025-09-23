@@ -233,7 +233,7 @@ export default function CreateEditTeamModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="max-w-lg max-h-[90vh] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl"
+        className="max-w-lg max-h-[85vh] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-0 shadow-2xl flex flex-col"
         data-testid="create-edit-team-modal"
       >
         {/* Enhanced Header */}
@@ -262,7 +262,7 @@ export default function CreateEditTeamModal({
           </div>
         </DialogHeader>
 
-        <div className="px-0 py-3 space-y-3">
+        <div className="px-0 py-3 space-y-3 flex-1 overflow-y-auto">
           {/* Team Setup Section */}
           <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
             <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
@@ -522,7 +522,7 @@ export default function CreateEditTeamModal({
         </div>
 
         {/* Enhanced Footer with Visible Buttons */}
-        <DialogFooter className="px-6 py-4 bg-white border-t border-gray-200 -mx-6 -mb-6 mt-4">
+        <DialogFooter className="px-6 py-4 bg-white border-t border-gray-200 -mx-6 -mb-6 mt-auto flex-shrink-0">
           <div className="flex gap-3 w-full">
             {/* Cancel Button */}
             <Button
