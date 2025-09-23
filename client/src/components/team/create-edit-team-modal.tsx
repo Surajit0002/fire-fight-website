@@ -262,9 +262,9 @@ export default function CreateEditTeamModal({
           </div>
         </DialogHeader>
 
-        <div className="space-y-3 flex-1 overflow-y-auto">
+        <div className="space-y-0 flex-1 overflow-y-auto">
           {/* Team Setup Section */}
-          <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+          <div className="bg-white rounded-none p-4 shadow-lg border-l-0 border-r-0 border-gray-200">
             <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
               <Star className="w-4 h-4 text-blue-500" />
               Team Information
@@ -399,7 +399,7 @@ export default function CreateEditTeamModal({
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-0 px-4 py-3 bg-gray-50">
             <Button
               type="button"
               onClick={() => onAddPlayer(team?.id || "new")}
@@ -418,7 +418,7 @@ export default function CreateEditTeamModal({
           </div>
 
           {/* Enhanced Team Members Preview - Compact Grid */}
-          <div className="bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+          <div className="bg-white rounded-none p-4 shadow-lg border-l-0 border-r-0 border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-500" />
@@ -522,7 +522,7 @@ export default function CreateEditTeamModal({
         </div>
 
         {/* Enhanced Footer with Visible Buttons */}
-        <DialogFooter className="px-6 py-4 bg-white border-t border-gray-200 -mx-6 -mb-6 mt-auto flex-shrink-0">
+        <DialogFooter className="px-4 py-4 bg-white border-t border-gray-200 -mx-6 -mb-6 mt-auto flex-shrink-0">
           <div className="flex gap-3 w-full">
             {/* Cancel Button */}
             <Button
