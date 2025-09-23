@@ -1,8 +1,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Clock, Users, Trophy, MapPin, Zap, Eye, Star, Calendar, DollarSign, GamepadIcon, Timer } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Users, Trophy, Clock, Gamepad2 } from "lucide-react";
 import { Link } from "wouter";
 
 interface TournamentCardProps {
@@ -11,7 +11,6 @@ interface TournamentCardProps {
     title: string;
     game: string;
     gameMode: string | null;
-    mapName?: string | null;
     entryFee: string;
     prizePool: string;
     maxParticipants: number;
@@ -26,229 +25,206 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'live':
-        return {
-          color: 'bg-red-500 text-white',
-          text: 'LIVE',
-          icon: '🔴',
-          pulse: true
-        };
+        return { color: 'bg-red-500', text: 'Live', dot: true };
       case 'upcoming':
-        return {
-          color: 'bg-blue-500 text-white',
-          text: 'UPCOMING',
-          icon: '⏳',
-          pulse: false
-        };
+        return { color: 'bg-blue-500', text: 'Starting Soon', dot: false };
       case 'completed':
-        return {
-          color: 'bg-gray-500 text-white',
-          text: 'FINISHED',
-          icon: '✅',
-          pulse: false
-        };
+        return { color: 'bg-gray-500', text: 'Completed', dot: false };
       default:
-        return {
-          color: 'bg-green-500 text-white',
-          text: 'OPEN',
-          icon: '🎮',
-          pulse: false
-        };
+        return { color: 'bg-green-500', text: 'Open', dot: false };
     }
   };
 
-  const getGameColor = (game: string) => {
-    const gameColors: Record<string, string> = {
-      'bgmi': 'from-orange-400 to-red-500',
-      'free fire': 'from-blue-400 to-purple-500',
-      'cod mobile': 'from-yellow-400 to-orange-500',
-      'valorant': 'from-red-400 to-pink-500',
-      'pubg mobile': 'from-green-400 to-teal-500'
+  const getGameBackground = (game: string) => {
+    const backgrounds = {
+      'free fire': 'linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff4757 100%)',
+      'bgmi': 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #5b73c4 100%)',
+      'pubg mobile': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9472 100%)',
+      'cod mobile': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #d299c2 100%)',
+      'valorant': 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feca57 100%)'
     };
-    return gameColors[game.toLowerCase()] || 'from-primary to-accent';
+    return backgrounds[game.toLowerCase()] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  };
+
+  const formatCurrency = (amount: string) => {
+    const num = parseFloat(amount);
+    if (num >= 100000) return `₹${(num / 100000).toFixed(0)}L`;
+    if (num >= 1000) return `₹${(num / 1000).toFixed(0)}k`;
+    return `₹${num}`;
   };
 
   const formatDateTime = (dateString: string | Date | null) => {
-    if (!dateString) return { date: 'TBD', time: 'TBD' };
+    if (!dateString) return 'TBD';
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = date.getTime() - now.getTime();
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffHours / 24);
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (diffDays > 0) {
-      return {
-        date: `${diffDays}d`,
-        time: date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-      };
+      return `${diffDays}d ${diffHours % 24}h ${diffMinutes}m`;
     } else if (diffHours > 0) {
-      return {
-        date: `${diffHours}h`,
-        time: 'left'
-      };
+      return `${diffHours}h ${diffMinutes}m`;
+    } else if (diffMinutes > 0) {
+      return `${diffMinutes}m`;
     } else {
-      return {
-        date: date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-        time: date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-      };
+      return 'Starting now';
     }
   };
 
-  const formatCurrency = (amount: string) => {
-    const num = parseFloat(amount);
-    if (num >= 100000) return `₹${(num / 100000).toFixed(1)}L`;
-    if (num >= 1000) return `₹${(num / 1000).toFixed(1)}K`;
-    return `₹${num.toLocaleString('en-IN')}`;
-  };
-
-  const slotsLeft = tournament.maxParticipants - (tournament.currentParticipants || 0);
-  const fillPercentage = ((tournament.currentParticipants || 0) / tournament.maxParticipants) * 100;
-  const isFull = slotsLeft <= 0;
-  const isCompleted = tournament.status === 'completed';
+  const participants = tournament.currentParticipants || 0;
+  const maxParticipants = tournament.maxParticipants;
+  const slotsLeft = maxParticipants - participants;
+  const fillPercentage = (participants / maxParticipants) * 100;
   const statusConfig = getStatusConfig(tournament.status);
-  const gameGradient = getGameColor(tournament.game);
-  const dateTime = formatDateTime(tournament.startTime);
+  const gameBackground = getGameBackground(tournament.game);
+
+  // Calculate prize distribution
+  const totalPrize = parseFloat(tournament.prizePool);
+  const rank1Prize = Math.floor(totalPrize * 0.5);
+  const rank2Prize = Math.floor(totalPrize * 0.3);
+  const rank3Prize = Math.floor(totalPrize * 0.2);
 
   return (
-    <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-full">
-      {/* Status Badge */}
-      <div className="absolute top-3 right-3 z-10">
-        <Badge className={`${statusConfig.color} text-xs font-bold px-2 py-1 ${statusConfig.pulse ? 'animate-pulse' : ''}`}>
-          {statusConfig.icon} {statusConfig.text}
-        </Badge>
+    <Card className="relative overflow-hidden bg-white/5 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl rounded-2xl">
+      {/* Game Background Header */}
+      <div 
+        className="relative h-32 overflow-hidden rounded-t-2xl"
+        style={{ background: gameBackground }}
+      >
+        {/* Game Characters/Background Image */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-white font-black text-4xl opacity-20 transform rotate-12">
+              {tournament.game.toUpperCase()}
+            </div>
+          </div>
+        </div>
+
+        {/* Live Status Badge */}
+        <div className="absolute top-3 left-3">
+          <Badge className={`${statusConfig.color} text-white text-xs font-bold px-3 py-1 rounded-full border-0`}>
+            {statusConfig.dot && (
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse mr-2"></span>
+            )}
+            {statusConfig.text}
+          </Badge>
+        </div>
+
+        {/* Game Title */}
+        <div className="absolute bottom-3 left-3">
+          <h3 className="text-white font-black text-lg drop-shadow-lg">
+            {tournament.game.toUpperCase()}
+          </h3>
+        </div>
       </div>
 
-      {/* Header with Game Info */}
-      <CardHeader className="pb-3 pt-4">
-        <div className="flex items-start gap-3">
-          {/* Game Icon */}
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gameGradient} flex items-center justify-center shadow-lg`}>
-            <GamepadIcon className="w-6 h-6 text-white" />
-          </div>
-          
-          {/* Tournament Info */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-sm line-clamp-2 group-hover:text-primary transition-colors" data-testid={`title-${tournament.id}`}>
-              {tournament.title}
-            </h3>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-muted-foreground font-medium">{tournament.game}</span>
-              <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
-              <span className="text-xs text-muted-foreground">{tournament.gameMode || 'Squad'}</span>
-            </div>
-            {tournament.mapName && (
-              <div className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3 h-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{tournament.mapName}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="pt-0 pb-4 space-y-4">
-        {/* Prize Pool & Entry Fee */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-primary/10 rounded-lg p-3 text-center border border-primary/20">
-            <Trophy className="w-4 h-4 mx-auto mb-1 text-primary" />
-            <div className="text-lg font-bold text-primary" data-testid={`prize-${tournament.id}`}>
-              {formatCurrency(tournament.prizePool)}
-            </div>
-            <div className="text-xs text-muted-foreground">Prize Pool</div>
-          </div>
-          
-          <div className="bg-muted/50 rounded-lg p-3 text-center border border-muted">
-            <DollarSign className="w-4 h-4 mx-auto mb-1 text-foreground" />
-            <div className="text-sm font-semibold" data-testid={`entry-${tournament.id}`}>
-              {parseFloat(tournament.entryFee) === 0 ? (
-                <span className="text-green-500 font-bold">FREE</span>
-              ) : (
-                formatCurrency(tournament.entryFee)
-              )}
-            </div>
-            <div className="text-xs text-muted-foreground">Entry Fee</div>
+      {/* Content Section */}
+      <div className="p-4 space-y-4">
+        {/* Tournament Title and Details */}
+        <div>
+          <h4 className="font-bold text-lg text-white mb-1 line-clamp-1">
+            🔥 {tournament.title}
+          </h4>
+          <div className="flex items-center gap-3 text-sm text-gray-300">
+            <span className="flex items-center gap-1">
+              <Gamepad2 className="w-4 h-4" />
+              {tournament.game}
+            </span>
+            <span>⚔️ {tournament.gameMode || 'Squad'}</span>
+            <span>📱 Mobile</span>
           </div>
         </div>
 
-        {/* Participants & Time */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-center gap-2 bg-muted/30 rounded-lg p-2">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <div>
-              <div className="text-sm font-medium" data-testid={`participants-${tournament.id}`}>
-                {tournament.currentParticipants || 0}/{tournament.maxParticipants}
-              </div>
-              <div className="text-xs text-muted-foreground">Players</div>
-            </div>
+        {/* Prize Pool Display */}
+        <div className="text-center">
+          <div className="text-2xl font-black text-green-400 mb-1">
+            {formatCurrency(tournament.prizePool)}
           </div>
+          <div className="text-xs text-gray-400">Prize Pool</div>
+        </div>
 
-          <div className="flex items-center gap-2 bg-muted/30 rounded-lg p-2">
-            <Timer className="w-4 h-4 text-muted-foreground" />
-            <div>
-              <div className="text-sm font-medium" data-testid={`time-${tournament.id}`}>
-                {dateTime.date}
-              </div>
-              <div className="text-xs text-muted-foreground">{dateTime.time}</div>
+        {/* Tournament Info Pills */}
+        <div className="flex justify-center gap-2">
+          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+            Team Size (4v4)
+          </div>
+          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white">
+            Format: Knockout
+          </div>
+          <div className="bg-white/10 px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+            <Trophy className="w-3 h-3" />
+            Winner Prizes
+          </div>
+        </div>
+
+        {/* Prize Distribution */}
+        <div className="flex justify-between items-center py-2">
+          <div className="text-center">
+            <div className="text-lg font-bold text-red-400">
+              {formatCurrency(rank1Prize.toString())}
             </div>
+            <div className="text-xs text-gray-400">Rank 1</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-red-400">
+              {formatCurrency(rank2Prize.toString())}
+            </div>
+            <div className="text-xs text-gray-400">Rank 2</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-red-400">
+              {formatCurrency(rank3Prize.toString())}
+            </div>
+            <div className="text-xs text-gray-400">Rank 3</div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm font-bold text-green-400">+2 per kill</div>
           </div>
         </div>
 
         {/* Progress Bar */}
         <div className="space-y-2">
-          <div className="flex justify-between items-center text-xs">
-            <span className="text-muted-foreground">Slots filled</span>
-            <span className="font-medium">{Math.round(fillPercentage)}%</span>
-          </div>
-          <div className="w-full bg-muted/50 rounded-full h-2">
+          <div className="w-full bg-gray-700 rounded-full h-1.5">
             <div 
-              className={`h-full bg-gradient-to-r ${gameGradient} rounded-full transition-all duration-500`}
+              className="bg-red-500 h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${fillPercentage}%` }}
             ></div>
           </div>
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>{participants} joined</span>
+            <span>{slotsLeft} slots left</span>
+          </div>
         </div>
 
-        {/* Action Button */}
-        <Link href={`/tournaments/${tournament.id}`}>
-          <Button 
-            className={`
-              w-full text-sm font-bold py-2 transition-all duration-300
-              ${isCompleted 
-                ? 'bg-muted text-muted-foreground cursor-not-allowed' 
-                : isFull
-                ? 'bg-destructive hover:bg-destructive/90 text-white'
-                : `bg-gradient-to-r ${gameGradient} text-white hover:shadow-lg`
-              }
-            `}
-            size="sm"
-            disabled={isCompleted}
-            data-testid={`action-button-${tournament.id}`}
-          >
-            {isCompleted ? (
-              <>
-                <Eye className="w-4 h-4 mr-1" />
-                View Results
-              </>
-            ) : isFull ? (
-              <>
-                <Users className="w-4 h-4 mr-1" />
-                Full
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 mr-1" />
-                Join Now
-                {slotsLeft <= 5 && slotsLeft > 0 && (
-                  <Badge variant="secondary" className="ml-2 text-xs bg-white/20 text-white">
-                    {slotsLeft} left
-                  </Badge>
-                )}
-              </>
-            )}
-          </Button>
-        </Link>
-      </CardContent>
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Link href={`/tournaments/${tournament.id}`} className="flex-1">
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg py-2 transition-all duration-200"
+              size="sm"
+            >
+              💳 join ₹{parseFloat(tournament.entryFee) === 0 ? '0' : parseFloat(tournament.entryFee)}
+            </Button>
+          </Link>
+          <Link href={`/tournaments/${tournament.id}`}>
+            <Button 
+              variant="outline" 
+              className="bg-orange-500 hover:bg-orange-600 text-white border-orange-500 font-bold rounded-lg px-4 py-2 transition-all duration-200"
+              size="sm"
+            >
+              view more
+            </Button>
+          </Link>
+        </div>
 
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        {/* Start Time */}
+        <div className="text-center text-xs text-gray-400">
+          <Clock className="w-3 h-3 inline mr-1" />
+          Starts in: {formatDateTime(tournament.startTime)}
+        </div>
+      </div>
     </Card>
   );
 }
